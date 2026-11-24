@@ -96,7 +96,7 @@ body{padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,e
   <div id="gameScreen" class="screen" hidden><canvas id="gl"></canvas><canvas id="cv"></canvas><div id="noGl" hidden>Không tải được đồ họa 3D. Kiểm tra mạng rồi tải lại trang.</div><div id="rotate" hidden><div class="ph"></div><p>Xoay ngang điện thoại để chơi</p><small>Nếu màn hình không xoay, tắt khóa xoay màn hình<br>trong Trung tâm điều khiển của iPhone.</small></div></div>
 <div id="friendNote" hidden style="position:absolute;left:50%;transform:translateX(-50%);top:max(12px,env(safe-area-inset-top,0px));z-index:30;display:flex;align-items:center;gap:10px;width:min(440px,92%);box-sizing:border-box;padding:10px 14px;background:#1e1530;border:1px solid var(--pink);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.5);color:#fff;font-size:14px"><span id="friendNoteTxt" style="flex:1"></span><button class="play" id="friendNoteGo" style="font-size:14px;padding:8px 14px">VÀO GAME</button><button class="link" id="friendNoteX">✕</button></div>
 <div id="chatBox" hidden style="position:absolute;left:50%;transform:translateX(-50%);top:44px;z-index:25;width:min(300px,62%);box-sizing:border-box;background:rgba(15,10,25,.88);border:1px solid var(--dim);border-radius:12px;padding:6px;color:#fff;font-size:12px"><div style="display:flex;gap:4px;align-items:center"><select id="chatTo" style="flex:1;min-width:0;background:#150f22;color:#fff;border:1px solid var(--dim);border-radius:6px;padding:3px"></select><button class="link" id="chatHide" style="padding:2px 6px;font-size:12px">−</button></div><div id="chatLog" style="height:110px;overflow:auto;margin:4px 0;white-space:pre-wrap;word-break:break-word"></div><div style="display:flex;gap:4px"><input id="chatIn" maxlength="120" placeholder="Nhập tin nhắn..." autocomplete="off" style="flex:1;min-width:0;background:#150f22;color:#fff;border:1px solid var(--dim);border-radius:6px;padding:4px;font-size:12px"><button class="link" id="chatSend" style="padding:2px 8px;font-size:12px">Gửi</button></div></div>
-<div id="gameBtns" hidden style="position:absolute;left:50%;transform:translateX(-50%);top:44px;z-index:25;display:flex;gap:6px"><button class="pill" id="chatOpen">Chat</button><button class="pill" id="micBtn">Mic: bật</button><button class="pill" id="saveMapBtn" hidden>Lưu map</button></div>
+<div id="gameBtns" hidden style="position:absolute;left:50%;transform:translateX(-50%);top:44px;z-index:25;display:flex;gap:6px"><button class="pill" id="chatOpen">Chat</button><button class="pill" id="payBtn">Chuyển tiền</button><button class="pill" id="micBtn">Mic: bật</button><button class="pill" id="saveMapBtn" hidden>Lưu map</button></div>
 </div>
 
 <div id="charSel" hidden style="position:fixed;inset:0;z-index:40;background:rgba(7,4,13,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff"><p style="font-size:20px;font-weight:700;margin:0">Chọn nhân vật</p><div style="display:flex;gap:16px"><button class="play" id="charMale" style="font-size:18px">Nam</button><button class="play" id="charFemale" style="font-size:18px">Nữ</button></div></div>
@@ -518,7 +518,7 @@ var game=(function(){
       g.userData.red=rm;g.userData.blue=bm;
       bx(50,2.5,0.8,0,13,BW+0.4,bm);bx(50,2.5,0.8,0,13,-(BW+0.4),bm);
     }
-    var inn=new THREE.Group();inn.scale.setScalar(1.3);while(g.children.length)inn.add(g.children[0]);g.add(inn);
+    var inn=new THREE.Group();inn.scale.setScalar(0.9);while(g.children.length)inn.add(g.children[0]);g.add(inn);
     return g;
   }
 
@@ -637,7 +637,7 @@ var game=(function(){
   SNAMES.push("ĐẤT CỦA BẠN");SCSS.push("#7dff8a");
   SNAMES.push("TIỆM TRÁI CÂY");SCSS.push("#9cff57");
   SNAMES.push("TIỆM XĂM MỰC ĐEN");SCSS.push("#b58cff");
-  SNAMES.push("TIỆM BÁNH MÌ");SCSS.push("#ffb347");SNAMES.push("CỬA HÀNG SKIN");SCSS.push("#6ec6ff");var FURN_MENU=SNAMES.length;SNAMES.push("NỘI THẤT NHÀ");SCSS.push("#c58cff");var FURN=[],furnOwned=[],furnMeshes=[];var FURN_KINDS=[["Sofa",300],["Giường",500],["Bàn ăn",250],["TV",450],["Đèn",120],["Cây cảnh",90]],FURN_STYLES=[["Hiện đại",1,0x9aa3ad],["Cổ điển",1.4,0x8a5a2a],["Tối giản",1.1,0xf0ece4]];FURN_KINDS.forEach(function(k,ki){FURN_STYLES.forEach(function(st,si){FURN.push({n:k[0]+" "+st[0],kind:ki,p:Math.round(k[1]*st[1]),col:st[2]})})});
+  SNAMES.push("TIỆM BÁNH MÌ");SCSS.push("#ffb347");SNAMES.push("CỬA HÀNG SKIN");SCSS.push("#6ec6ff");var FURN_MENU=SNAMES.length;SNAMES.push("NỘI THẤT NHÀ");SCSS.push("#c58cff");var PAY_MENU=SNAMES.length;SNAMES.push("CHUYỂN TIỀN");SCSS.push("#7dff8a");var FURN=[],furnOwned=[],furnMeshes=[];var FURN_KINDS=[["Sofa",300],["Giường",500],["Bàn ăn",250],["TV",450],["Đèn",120],["Cây cảnh",90]],FURN_STYLES=[["Hiện đại",1,0x9aa3ad],["Cổ điển",1.4,0x8a5a2a],["Tối giản",1.1,0xf0ece4]];FURN_KINDS.forEach(function(k,ki){FURN_STYLES.forEach(function(st,si){FURN.push({n:k[0]+" "+st[0],kind:ki,p:Math.round(k[1]*st[1]),col:st[2]})})});
   var SHOPDEF=[
     {n:"TIỆM SÚNG BÁ ĐẠO",s:"TIỆM SÚNG",css:"#ff3b3b",col:0xff3b3b,menu:0},
     {n:"PHỞ BÒ ƯU TIÊN",s:"PHỞ",css:"#ffd23f",col:0xffd23f,menu:1},
@@ -1119,7 +1119,7 @@ var game=(function(){
   function findProp(k){for(var i=0;i<props.length;i++)if(props[i].kind===k)return props[i];return null}
   function exitGame(){confirmExit()}
   var TOD_NAMES=["SÁNG","TRƯA","CHIỀU","ĐÊM"];
-  function skipTime(){var k=(Math.floor(tod*4+0.001)+1)%4;tod=k/4;say("Đã chuyển sang "+TOD_NAMES[k].toLowerCase())}
+  function skipTime(){if(net.hostConn){say("Chỉ chủ phòng mới đổi giờ được");return}var k=(Math.floor(tod*4+0.001)+1)%4;tod=k/4;say("Đã chuyển sang "+TOD_NAMES[k].toLowerCase())}
   function drawTime(){
     fillRR(20*u,102*u,150*u,24*u,8*u,cShade);
     label(TOD_NAMES[Math.floor(tod*4+0.001)%4],34*u,120*u,17*u,"#ffffff","left");
@@ -1128,7 +1128,7 @@ var game=(function(){
   function drawNames(){
     var GOLD="#ffd23f";
     for(var id in net.players){
-      var R=net.players[id],dx=R.x-px,dy=R.y-py,fr=isFriend(R),nm=String(R.nm||"Bạn").slice(0,12);
+      var R=net.players[id];if((R.pl||"")!==placeKey())continue;var dx=R.x-px,dy=R.y-py,fr=isFriend(R),nm=String(R.nm||"Bạn").slice(0,12);
       if(!fr){
         if(dx*dx+dy*dy>900*900)continue;
         var v0=new THREE.Vector3(R.x,R.c?50:70,R.y).project(camera);
@@ -1206,7 +1206,7 @@ var game=(function(){
       if(money<p.price){say("Không đủ tiền mua "+p.n+" ($"+p.price+")");return true}
       money-=p.price;p.own=true;unlockAch(p.kind==="house"?"house":"garage");say("Đã mua "+p.n+"!");return true;
     }
-    if(p.kind==="house"){hp=100;heroDown=0;say("Về nhà nghỉ ngơi, máu đầy lại!");menuOpen=FURN_MENU;return true}
+    if(p.kind==="house"){hp=100;heroDown=0;hp=100;heroDown=0;say("Chào mừng về nhà! Bấm để mua đồ trang trí.");menuOpen=FURN_MENU;return true}
     if(inCar){p.cars.push({kind:inCar.kind,color:inCar.color});scene.remove(inCar.mesh);cars.splice(cars.indexOf(inCar),1);inCar=null;px=p.x+60;py=p.y;say("Đã cất xe vào nhà xe. Đang có "+p.cars.length+" xe.");return true}
     if(p.cars.length){
       var d=p.cars.shift();var c=mkCar(p.out?p.out.x:p.x+70,p.out?p.out.y:p.y,p.out?HP:0,d.color,false);
@@ -1218,10 +1218,10 @@ var game=(function(){
   function addTattoo(i){
     var tx=tatTex(i),m,mat;
     if(i<2||i===3)tx.repeat.set(i===3?1:0.5,1);if(i<2)tx.offset.set(0.25,0);
-    mat=new THREE.MeshLambertMaterial({map:tx,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
-    if(i<2){m=mesh(new THREE.PlaneGeometry(4.2,9.4),mat,0,-5,i?2.35:-2.35);if(!i)m.rotation.y=Math.PI;(i?hero.elR:hero.elL).add(m)}
+    mat=new THREE.MeshLambertMaterial({map:tx,transparent:true,side:THREE.DoubleSide,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+    if(i<2){m=mesh(new THREE.PlaneGeometry(4.2,9.4),mat,0,-5,i?2.7:-2.7);if(!i)m.rotation.y=Math.PI;(i?hero.elR:hero.elL).add(m)}
     else if(i===2){m=mesh(new THREE.CylinderGeometry(3.05,3.1,2.4,16,1,true),mat,0,21.6,0);hero.sp.add(m)}
-    else{m=mesh(new THREE.PlaneGeometry(8.4,8.4),mat,5.1,14,0);m.rotation.y=HP;hero.sp.add(m)}
+    else{m=mesh(new THREE.PlaneGeometry(8.4,8.4),mat,5.8,14,0);m.rotation.y=HP;hero.sp.add(m)}
     unlockAch("tattoo");
   }
   function buildGunModel(i){
@@ -1340,7 +1340,7 @@ var game=(function(){
       if(!voice.on||voice.mic){st.getTracks().forEach(function(t){try{t.stop()}catch(e){}});done(!!voice.mic);return} /* đã tắt trong lúc chờ cấp quyền */
       voice.mic=st;
       var ctx=voiceCtx();
-      if(ctx&&voice.dest){try{voice.src=ctx.createMediaStreamSource(st);voice.src.connect(voice.dest)}catch(e){}}
+      if(ctx&&voice.dest){try{voice.src=ctx.createMediaStreamSource(st);var mgain=ctx.createGain();mgain.gain.value=2.2;voice.src.connect(mgain);mgain.connect(voice.dest)}catch(e){}}
       done(true);
     },fail)}catch(e){fail()}
   }
@@ -1356,7 +1356,7 @@ var game=(function(){
     var fail=function(){chatAdd("Hệ thống","Chưa mở được mic. Bấm nút Mic và cho phép micro.","");cb(new MediaStream())};
     try{navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},video:false}).then(function(st){voice.stream=st;applyMic();voiceClear();cb(st)},fail)}catch(e){fail()}
   }
-  var VOICE_GAIN=4;
+  var VOICE_GAIN=3.5;
   var vctx=null,vnodes={};
   function voiceCtx(){
     if(!vctx){try{vctx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){vctx=null}}
@@ -1375,6 +1375,7 @@ var game=(function(){
         a.muted=true; /* chỉ để giữ stream chạy; tiếng phát qua GainNode */
         var src=ctx.createMediaStreamSource(st),g=ctx.createGain(),comp=ctx.createDynamicsCompressor();
         g.gain.value=VOICE_GAIN;
+        comp.threshold.value=-12;comp.knee.value=6;comp.ratio.value=3;comp.attack.value=0.004;comp.release.value=0.25;
         src.connect(g);g.connect(comp);comp.connect(ctx.destination);
         vnodes[pid]=src;
       }catch(e){a.muted=false;a.volume=1}
@@ -1435,7 +1436,8 @@ var game=(function(){
     for(var i=0;i<6;i++)r+=ch.charAt(ri(ch.length));
     return r;
   }
-  function myState(seatId){var st=myState0(seatId);st.gf=net.gift?{to:net.gift.to,k:net.gift.k,s:net.gift.s}:null;st.g=(hero&&hero.gender)||"m";if(hero){st.sc=hero.shirtMat.color.getHex();st.jc=hero.jeanMat.color.getHex()}return st}
+  function placeKey(){return(inShop&&curShop)?("s"+curShop.type):""}
+  function myState(seatId){var st=myState0(seatId);st.pl=placeKey();st.gf=net.gift?{to:net.gift.to,k:net.gift.k,s:net.gift.s}:null;st.g=(hero&&hero.gender)||"m";if(hero){st.sc=hero.shirtMat.color.getHex();st.jc=hero.jeanMat.color.getHex()}return st}
   function myState0(seatId){
     var c=inCar;
     var pid=(net.pc&&net.pc.id)||"";
@@ -1464,6 +1466,7 @@ var game=(function(){
     c.on("data",function(d){
       if(!said){said=true;netSt("Có bạn vào phòng. Hiện có "+(net.conns.length+1)+"/5 người.");say("Có người vào phòng!");notifyFriends()}
       var m;try{m=JSON.parse(d)}catch(x){return}
+      if(m&&m.t==="pay"){if(m.to===net.myId)receivePay(m);net.conns.forEach(function(x){if(x!==c){try{x.send(d)}catch(e){}}});return}
       if(m&&m.t==="c"){chatAdd(String(m.n).slice(0,12),String(m.m).slice(0,120),"Phòng");net.conns.forEach(function(x){if(x!==c){try{x.send(JSON.stringify({t:"c",n:String(m.n).slice(0,12),m:String(m.m).slice(0,120)}))}catch(e){}}});return}
       if(m&&m.t==="s"&&m.s&&m.s.id){var id=String(m.s.id).slice(0,8);m.s.id=id;net.others[id]={s:m.s,t:performance.now(),c:c}}
     });
@@ -1476,8 +1479,9 @@ var game=(function(){
     c.on("data",function(d){
       var m;try{m=JSON.parse(d)}catch(x){return}if(!m)return;
       if(m.t==="full"){netSt("Phòng đã đủ 5 người. Thử phòng khác.");netReset();return}
+      if(m.t==="pay"){if(m.to===net.myId)receivePay(m);return}
       if(m.t==="c"){chatAdd(String(m.n).slice(0,12),String(m.m).slice(0,120),"Phòng");return}
-      if(m.t==="w"){net.players={};for(var i=0;i<m.p.length;i++){var P=m.p[i];if(P.id!==net.myId)net.players[P.id]=P}}
+      if(m.t==="w"){if(typeof m.tod==="number")tod=m.tod;net.players={};for(var i=0;i<m.p.length;i++){var P=m.p[i];if(P.id!==net.myId)net.players[P.id]=P}}
     });
     c.on("close",function(){net.ok=false;net.players={};netSt("Chủ phòng đã thoát hoặc mất kết nối.")});
   }
@@ -1518,13 +1522,13 @@ var game=(function(){
     net.riding=!!(net.want&&D&&D.c===1&&D.dr===net.myId);
     if(wasRiding&&!net.riding){net.want="";var eh=ph;px-=Math.sin(eh)*29;py+=Math.cos(eh)*29;say("Đã xuống xe.")}
     voiceSync();
-    if(net.riding){unlockAch("coop");var sq=seatXY(D.x,D.y,D.h);px=sq[0];py=sq[1];ph=D.h;inCar=null;hero.g.visible=true;hero.g.position.set(px,0,py);hero.g.rotation.y=-ph;poseHuman(hero,0,0,time,true)}
+    if(net.riding){unlockAch("coop");var dgh=net.ghosts[net.want];var cxr=dgh?dgh.rx:D.x,cyr=dgh?dgh.ry:D.y,chr=dgh?dgh.rh:D.h;var sq=seatXY(cxr,cyr,chr);var kr=Math.min(1,14*dt);if(Math.hypot(sq[0]-px,sq[1]-py)>150){px=sq[0];py=sq[1]}else{px+=(sq[0]-px)*kr;py+=(sq[1]-py)*kr}ph=chr;inCar=null;hero.g.visible=true;hero.g.position.set(px,0,py);hero.g.rotation.y=-ph;poseHuman(hero,0,0,time,true)}
     net.acc+=dt;
     if(net.acc>=0.1){
       net.acc=0;
       if(net.isHost){
         var list=[me];for(var k2 in net.players)list.push(net.players[k2]);
-        var msg=JSON.stringify({t:"w",p:list});
+        var msg=JSON.stringify({t:"w",p:list,tod:tod});
         net.conns.forEach(function(c){try{c.send(msg)}catch(e){}});
       }else if(net.hostConn){try{net.hostConn.send(JSON.stringify({t:"s",s:me}))}catch(e){}}
     }
@@ -1546,7 +1550,8 @@ var game=(function(){
       var vis=R.x>0;
       if(rider){var sr=seatXY(D2.x,D2.y,D2.h);g.rx=sr[0];g.ry=sr[1];g.rh=D2.h}
       else{var kk=Math.min(1,12*dt);g.rx+=(R.x-g.rx)*kk;g.ry+=(R.y-g.ry)*kk;g.rh+=angleDiff(R.h,g.rh)*kk}
-      g.hm.g.visible=rider||(vis&&!R.c);g.cm.visible=vis&&!!R.c&&!rider;
+      var samePl=(R.pl||"")===placeKey();
+      g.hm.g.visible=samePl&&(rider||(vis&&!R.c));g.cm.visible=samePl&&vis&&!!R.c&&!rider;
       g.hm.g.position.set(g.rx,0,g.ry);g.hm.g.rotation.y=-g.rh;
       g.cm.position.set(g.rx,0,g.ry);g.cm.rotation.y=-g.rh;
       g.ph+=R.m?dt*9:0;poseHuman(g.hm,rider?0:(R.m?1:0),g.ph,time,rider);
@@ -2273,7 +2278,7 @@ var game=(function(){
   function aLabel(car){
     var at0=(!inShop&&!car)?nearATM():null;if(at0)return at0.ready?("CƯỚP ATM "+at0.hits+"/5"):"ATM HẾT TIỀN";
     if(inShop){if(hyp(px-inShop.cx,py-(inShop.cz+inShop.hw-18))<80)return"RA NGOÀI";if(hyp(px-inShop.cx,py-(inShop.cz-20))<130)return"MUA HÀNG";return"..."}
-    var pr=nearProp();if(pr&&!inShop){if(pr.kind==="showroom")return"MUA XE";if(pr.kind==="flower")return"TIỆM HOA";if(pr.kind==="fruit")return"TIỆM TRÁI CÂY";if(pr.kind==="lot")return !pr.own?"MUA ĐẤT $"+pr.price:"ĐẤT CỦA BẠN";if(!pr.own)return"MUA "+pr.n+" $"+pr.price;if(pr.kind==="house")return"VÀO NHÀ";if(car)return"CẤT XE";if(pr.cars.length)return"LẤY XE"}
+    var pr=nearProp();if(pr&&!inShop){if(pr.kind==="showroom")return"MUA XE";if(pr.kind==="flower")return"TIỆM HOA";if(pr.kind==="fruit")return"TIỆM TRÁI CÂY";if(pr.kind==="lot")return !pr.own?"MUA ĐẤT $"+pr.price:"ĐẤT CỦA BẠN";if(!pr.own)return"MUA "+pr.n+" $"+pr.price;if(pr.kind==="house")return"TRANG TRÍ NHÀ";if(car)return"CẤT XE";if(pr.cars.length)return"LẤY XE"}
     if(!car&&hero.flowerKind!=null&&nearRemote())return"TẶNG HOA";
     if(!car&&net.want)return net.riding?"XUỐNG XE":"HỦY XIN";
     if(!car&&canRide())return"LÊN XE BẠN";
@@ -2328,9 +2333,31 @@ var game=(function(){
     furnMeshes.forEach(function(m){scene.remove(m)});furnMeshes=[];
     if(props[0]&&props[0].own)furnOwned.forEach(function(i){placeFurn(i)});
   }
+  // Chuyển tiền giữa người chơi trong phòng: chủ phòng chuyển tiếp cho tất cả
+  function receivePay(m){money+=m.amt;say("Nhận $"+m.amt+" từ "+String(m.from||"Bạn").slice(0,12));beep(880,80,"sine",0.05)}
+  function doPay(id,amt){
+    var R=net.players[id],nm=R?String(R.nm||"Bạn").slice(0,12):"Bạn";
+    if(!net.pc){say("Cần vào phòng để chuyển tiền");return}
+    if(money<amt){say("Không đủ tiền ($"+amt+")");return}
+    money-=amt;
+    var msg=JSON.stringify({t:"pay",to:id,from:myName,amt:amt});
+    if(net.isHost){net.conns.forEach(function(c){try{c.send(msg)}catch(e){}})}
+    else if(net.hostConn){try{net.hostConn.send(msg)}catch(e){}}
+    say("Đã gửi $"+amt+" cho "+nm);
+  }
+  function payItems(){
+    var r=[],id,R,nm,ai,a;
+    for(id in net.players){
+      R=net.players[id];nm=String(R.nm||"Bạn").slice(0,12);
+      for(ai=0;ai<2;ai++){a=ai?5000:1000;r.push({n:"Gửi $"+a+" cho "+nm,p:0,k:"pay",id:id,amt:a})}
+    }
+    if(!r.length)r.push({n:"Chưa có ai trong phòng",p:0,k:"nop"});
+    return r;
+  }
   function menuItems(){
     var t=menuOpen,r=[],i;
     if(t===FURN_MENU)return furnItems();
+    if(t===PAY_MENU)return payItems();
     if(t===0){for(i=1;i<WEP.length;i++){var w=WEP[i];r.push(own[i]?{n:"Mua đạn "+w.n+" (+"+w.am+")",p:Math.round(w.c*0.25),k:"a",i:i}:{n:"Mua "+w.n,p:w.c,k:"w",i:i})}}
     else if(t===1){r=[{n:"Tô phở bò (+35 máu)",p:50,k:"h",id:"pho"},{n:"Bánh mì thịt (+20 máu)",p:30,k:"h",id:"banhmi"},{n:"Trà đá (+8 máu)",p:10,k:"h",id:"trada"},{n:"Nước tăng lực (đầy nitro)",p:40,k:"n"}]}
     else if(t===2)r=[{n:"Đổi skin nhân vật (100 mẫu)",p:0,k:"skmenu"},{n:"Đổi áo mới",p:100,k:"s"},{n:"Đổi quần mới",p:80,k:"p"}];
@@ -2371,6 +2398,7 @@ var game=(function(){
         if(it.k==="pg"){skPage=clamp(skPage+it.d,0,Math.max(0,Math.ceil(skinList().length/SKPP)-1))}else if(it.k==="skmenu"){menuOpen=10;skPage=0}else if(it.k==="sk"){skOwn[it.i]=1;applySkin(hero,it.i);say(it.i?"Đã mặc skin "+SK[it.i-1][0]+"!":"Đã về skin gốc")}else if(it.k==="A"){var gn=0;for(var gi=1;gi<WEP.length;gi++)if(own[gi])gn++;if(gn){giveItem("hopdan")}else{money+=it.p;say("Chưa có súng để mua đạn!")}}
         else if(it.k==="w"){own[it.i]=true;ammo[it.i]=WEP[it.i].am;wi=it.i;say("Đã mua "+WEP[it.i].n+"!")}
         else if(it.k==="a"){giveItem("ammo"+it.i)}
+        else if(it.k==="pay"){doPay(it.id,it.amt)}
         else if(it.k==="f"){furnOwned.push(it.i);placeFurn(it.i);say("Đã mua "+FURN[it.i].n+" cho nhà!")}
         else if(it.k==="h"){giveItem(it.id)}
         else if(it.k==="n"){giveItem("nitro")}
@@ -3047,7 +3075,8 @@ var game=(function(){
   document.addEventListener("visibilitychange",function(){if(document.hidden)saveGame()});
   window.addEventListener("pagehide",saveGame);
   $("resetBtn").addEventListener("click",function(){if(window.confirm("Xóa toàn bộ tiến trình đã lưu?")){try{localStorage.removeItem("gta6save");localStorage.removeItem("gta6ach")}catch(e){}location.reload()}});
-  $("chatOpen").addEventListener("click",function(){$("chatBox").hidden=false;$("chatOpen").hidden=true;$("micBtn").hidden=true;saveBtnSync()});
+  $("payBtn").addEventListener("click",function(){if(menuOpen===null)menuOpen=PAY_MENU});
+$("chatOpen").addEventListener("click",function(){$("chatBox").hidden=false;$("chatOpen").hidden=true;$("micBtn").hidden=true;saveBtnSync()});
   $("chatHide").addEventListener("click",function(){$("chatBox").hidden=true;$("chatOpen").hidden=false;$("micBtn").hidden=false;saveBtnSync()});
   var chatSendNow=function(){var t=$("chatIn").value.trim();if(!t)return;$("chatIn").value="";var to=$("chatTo").value;if(to==="room")roomSend(t);else dmSend(to.slice(2),t)};
   $("chatSend").addEventListener("click",chatSendNow);
