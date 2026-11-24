@@ -55,8 +55,19 @@ body{padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,e
     <button class="play" id="playBtn">▶  CHƠI NGAY</button>
     <button class="link" id="replayBtn">Xem lại video</button>
     <button class="link" id="onlineBtn">Chơi online với bạn bè</button>
-    <button class="link" id="achBtn">Thành tích</button><p class="sub" id="achList" hidden style="white-space:pre-line;text-align:left;max-height:30vh;overflow:auto"></p>
-    <div id="netPanel" hidden><div class="netRow"><button class="link" id="netHost">Tạo phòng</button><input id="netBox" maxlength="6" placeholder="Mã 6 ký tự" autocomplete="off"><button class="link" id="netJoin">Vào phòng</button></div><p class="sub" id="netSt">Cách chơi chung (tối đa 5 người):<br>1. Chủ phòng bấm TẠO PHÒNG, rồi đọc mã 6 ký tự cho bạn.<br>2. Bạn nhập mã vào ô giữa và bấm VÀO PHÒNG.<br>3. Khi có chữ “Đã kết nối”, mọi người bấm CHƠI NGAY.</p><p class="sub">Mã của bạn: <b id="myCode"></b> · Tên: <input id="myName" class="netIn" maxlength="12" placeholder="Tên bạn"></p><div class="netRow"><input id="friendBox" class="netIn" maxlength="6" placeholder="Mã bạn bè" autocomplete="off" style="text-transform:uppercase"><button class="link" id="friendAdd">Thêm bạn</button></div><p class="sub" id="friendList"></p></div>
+    <button class="link" id="achBtn">Thành tích</button>
+    <button class="link" id="resetBtn">Chơi mới (xóa lưu)</button><p class="sub" id="achList" hidden style="white-space:pre-line;text-align:left;max-height:30vh;overflow:auto"></p>
+    <div id="netPanel" hidden>
+      <p class="sub" style="font-size:14px;color:#fff;margin:0 0 4px">Chơi với bạn bè (tối đa 5 người)</p>
+      <div class="netRow"><button class="play" id="netHost" style="font-size:16px;padding:8px 18px">1. Tạo phòng</button></div>
+      <p class="sub">Bạn là chủ phòng: bấm “Tạo phòng” rồi đọc mã 6 ký tự cho bạn bè.</p>
+      <div class="netRow"><input id="netBox" class="netIn" maxlength="6" placeholder="Nhập mã phòng" autocomplete="off" style="text-transform:uppercase"><button class="play" id="netJoin" style="font-size:16px;padding:8px 18px">2. Vào phòng</button></div>
+      <p class="sub">Bạn bè: nhập mã của chủ phòng rồi bấm “Vào phòng”.</p>
+      <p class="sub" id="netSt" style="color:#fff">Chưa vào phòng nào.</p>
+      <p class="sub">Tên bạn: <input id="myName" class="netIn" maxlength="12" placeholder="Tên bạn"> · Mã của bạn: <b id="myCode"></b></p>
+      <div class="netRow"><input id="friendBox" class="netIn" maxlength="6" placeholder="Mã bạn bè" autocomplete="off" style="text-transform:uppercase"><button class="link" id="friendAdd">Thêm bạn</button></div>
+      <p class="sub" id="friendList"></p>
+    </div>
     <p class="keys">Điện thoại: xoay ngang · kéo bên trái để đi · vuốt bên phải để xoay camera · giữ NITRO để tăng tốc<br>Máy tính: WASD đi/lái · kéo chuột hoặc Q/R xoay camera · E vào/xuống xe · Space đấm/bóp còi · Shift nitro</p>
     <p class="sub">Bản hài • làm chơi cho vui</p>
   </div>
@@ -64,9 +75,10 @@ body{padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,e
 </div>
 
 <div id="friendNote" hidden style="position:fixed;left:50%;transform:translateX(-50%);top:max(12px,env(safe-area-inset-top,0px));z-index:30;display:flex;align-items:center;gap:10px;width:min(440px,92%);box-sizing:border-box;padding:10px 14px;background:#1e1530;border:1px solid var(--pink);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.5);color:#fff;font-size:14px"><span id="friendNoteTxt" style="flex:1"></span><button class="play" id="friendNoteGo" style="font-size:14px;padding:8px 14px">VÀO GAME</button><button class="link" id="friendNoteX">✕</button></div>
-<div id="chatBox" hidden style="position:fixed;left:8px;top:max(8px,env(safe-area-inset-top,0px));z-index:25;width:min(300px,62%);box-sizing:border-box;background:rgba(15,10,25,.88);border:1px solid var(--dim);border-radius:12px;padding:6px;color:#fff;font-size:12px"><div style="display:flex;gap:4px;align-items:center"><select id="chatTo" style="flex:1;min-width:0;background:#150f22;color:#fff;border:1px solid var(--dim);border-radius:6px;padding:3px"></select><button class="link" id="micBtn" style="padding:2px 6px;font-size:12px">Mic: bật</button><button class="link" id="chatHide" style="padding:2px 6px;font-size:12px">−</button></div><div id="chatLog" style="height:110px;overflow:auto;margin:4px 0;white-space:pre-wrap;word-break:break-word"></div><div style="display:flex;gap:4px"><input id="chatIn" maxlength="120" placeholder="Nhập tin nhắn..." autocomplete="off" style="flex:1;min-width:0;background:#150f22;color:#fff;border:1px solid var(--dim);border-radius:6px;padding:4px;font-size:12px"><button class="link" id="chatSend" style="padding:2px 8px;font-size:12px">Gửi</button></div></div>
+<div id="chatBox" hidden style="position:fixed;left:8px;top:max(8px,env(safe-area-inset-top,0px));z-index:25;width:min(300px,62%);box-sizing:border-box;background:rgba(15,10,25,.88);border:1px solid var(--dim);border-radius:12px;padding:6px;color:#fff;font-size:12px"><div style="display:flex;gap:4px;align-items:center"><select id="chatTo" style="flex:1;min-width:0;background:#150f22;color:#fff;border:1px solid var(--dim);border-radius:6px;padding:3px"></select><button class="link" id="chatHide" style="padding:2px 6px;font-size:12px">−</button></div><div id="chatLog" style="height:110px;overflow:auto;margin:4px 0;white-space:pre-wrap;word-break:break-word"></div><div style="display:flex;gap:4px"><input id="chatIn" maxlength="120" placeholder="Nhập tin nhắn..." autocomplete="off" style="flex:1;min-width:0;background:#150f22;color:#fff;border:1px solid var(--dim);border-radius:6px;padding:4px;font-size:12px"><button class="link" id="chatSend" style="padding:2px 8px;font-size:12px">Gửi</button></div></div>
 <button class="link" id="chatOpen" style="position:fixed;left:8px;top:max(8px,env(safe-area-inset-top,0px));z-index:25;background:rgba(15,10,25,.8);border-radius:10px;padding:6px 10px">Chat</button>
 <div id="charSel" hidden style="position:fixed;inset:0;z-index:40;background:rgba(7,4,13,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff"><p style="font-size:20px;font-weight:700;margin:0">Chọn nhân vật</p><div style="display:flex;gap:16px"><button class="play" id="charMale" style="font-size:18px">Nam</button><button class="play" id="charFemale" style="font-size:18px">Nữ</button></div></div>
+<button class="link" id="micBtn" style="position:fixed;left:82px;top:max(8px,env(safe-area-inset-top,0px));z-index:25;background:rgba(15,10,25,.8);border-radius:10px;padding:6px 10px">Mic: bật</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
 <script>
@@ -80,7 +92,7 @@ function show(n){
   for(var k in screens)screens[k].hidden=(k!==n);
   if(n!=="video"){try{vid.pause()}catch(e){}}
   game.running=(n==="game");
-  if(n==="game")game.resume();
+  if(n==="game"){try{history.pushState({gta:1},"")}catch(e){}game.resume()}
   checkOrient();
 }
 function checkOrient(){
@@ -93,6 +105,8 @@ function checkOrient(){
   if(was!==need)game.resume();
 }
 window.addEventListener("resize",checkOrient);
+function confirmExit(){if(window.confirm("Thoát về menu chính? Tiến trình sẽ được lưu lại.")){if(game&&game.save)game.save();show("menu")}}
+window.addEventListener("popstate",function(){if(stage==="game"){try{history.pushState({gta:1},"")}catch(e){}confirmExit()}});
 window.addEventListener("orientationchange",function(){setTimeout(checkOrient,250)});
 function showLogo(){show("logo");setTimeout(function(){$("logoImg").classList.add("on")},30)}
 function showVideo(){
@@ -140,7 +154,7 @@ var game=(function(){
     $("noGl").hidden=false;
     return{set running(v){},set paused(v){},resume:function(){}};
   }
-  var P=720,ROAD=280,N=18,W=P*N,TWO_PI=Math.PI*2,LANE=52,HP=Math.PI/2,S0=Math.floor(N/2)*P+ROAD/2,SW=40,types=[],camPitch=0.32,camZoom=1,camLY=0,hp=100,heroDown=0,inShop=null,shops=[],interiors=[],curShop=null,menuOpen=null,mapOpen=false,wp=null,wi=0,own=[true,false,false,false,false],ammo=[0,0,0,0,0],fireT=0,fireId=-1,tracers=[],helis=[],puffs=[],spot=null,dX=0,dY=0,dR=1,mX=0,mY=0,mR=1;
+  var P=800,ROAD=360,N=18,W=P*N,TWO_PI=Math.PI*2,LANE=52,HP=Math.PI/2,S0=Math.floor(N/2)*P+ROAD/2,SW=40,types=[],camPitch=0.32,camZoom=1,camLY=0,hp=100,heroDown=0,inShop=null,shops=[],interiors=[],curShop=null,menuOpen=null,mapOpen=false,wp=null,wi=0,own=[true,false,false,false,false],ammo=[0,0,0,0,0],fireT=0,fireId=-1,tracers=[],helis=[],puffs=[],spot=null,dX=0,dY=0,dR=1,mX=0,mY=0,mR=1;
   var width=0,height=0,u=1;
   var cars=[],cops=[],civs=[],cash=[],pops=[];
   var px,py,ph=0,inCar=null,money=0,goal=5000,wanted=0,bust=0,calm=0,spawnT=0,cdown=0,time=0,banner="",bannerT=0;
@@ -380,6 +394,7 @@ var game=(function(){
       g.add(mesh(G(6,5,18),rm,-6,27+cabH,-11));g.add(mesh(G(6,5,18),bm,-6,27+cabH,11));
       g.userData.red=rm;g.userData.blue=bm;g.add(mesh(G(10,2.4,2.4),L(0x111111),-4,23+cabH/2,-27));g.add(mesh(G(10,2.4,2.4),L(0x111111),-4,23+cabH/2,27));
     }
+    var inn=new THREE.Group();inn.scale.setScalar(1.3);while(g.children.length)inn.add(g.children[0]);g.add(inn);
     return g;
   }
   function mkCar(x,y,h,color,cop){
@@ -403,12 +418,13 @@ var game=(function(){
     hd.add(mesh(G(3.6,2.6,13),dark,4.4,11.4,0));hd.add(mesh(G(7,3.2,1.6),dark,-0.5,10.5,6.4));hd.add(mesh(G(7,3.2,1.6),dark,-0.5,10.5,-6.4));
     addFace(hd,skin,dark);
     function arm(z){var s=new THREE.Group();s.position.set(0,18,z);sp.add(s);s.add(mesh(G(5.4,11,5.4),shirt,0,-5,0));
-      var e=new THREE.Group();e.position.y=-10;s.add(e);e.add(mesh(G(4.4,10,4.4),skin,0,-5,0));e.add(mesh(G(4.8,4.6,4.8),skin,0,-11,0));return[s,e]}
+      var e=new THREE.Group();e.position.y=-10;s.add(e);e.add(mesh(G(4.4,10,4.4),skin,0,-5,0));e.add(mesh(G(4.6,5,4.4),skin,0,-11,0));e.add(mesh(G(4.8,2.2,4.6),skin,0,-14.2,0));return[s,e]}
     function leg(z){var h=new THREE.Group();h.position.set(0,-2,z);root.add(h);h.add(mesh(G(6.8,17,7),jean,0,-8.5,0));
-      var k=new THREE.Group();k.position.y=-17;h.add(k);k.add(mesh(G(5.6,17,6),jean,0,-8.5,0));k.add(mesh(G(11,4,7.5),shoe,2,-17,0));return[h,k]}
+      var k=new THREE.Group();k.position.y=-17;h.add(k);k.add(mesh(G(5.6,17,6),jean,0,-8.5,0));k.add(mesh(G(11,4,7.5),shoe,2,-17,0));k.add(mesh(G(11.6,1.2,7.9),L(0x222222),2,-19.6,0));return[h,k]}
     var a1=arm(-10.6),a2=arm(10.6),l1=leg(-4),l2=leg(4);
     J.shL=a1[0];J.elL=a1[1];J.shR=a2[0];J.elR=a2[1];J.hpL=l1[0];J.knL=l1[1];J.hpR=l2[0];J.knR=l2[1];
     var sh=new THREE.Mesh(shadowGeoHero,shadowMat);sh.rotation.x=-HP;sh.position.y=0.8;g.add(sh);
+    a1[1].add(mesh(G(2.4,1.8,2.8),B(0xc9a227),0,-7.5,0));
     J.gun=new THREE.Group();J.gun.add(mesh(G(2.6,8,2.6),L(0x2a2a33),0,-14,0));J.gun.add(mesh(G(1.4,2,1.4),B(0xffd23f),0,-19.5,0));a2[1].add(J.gun);J.gun.visible=false;
     g.scale.set(0.85,0.85,0.85);scene.add(g);J.g=g;J.shirtMat=shirt;J.jeanMat=jean;
     return J;
@@ -442,7 +458,231 @@ var game=(function(){
       o.J.g.position.set(o.x,0,o.y);o.J.g.rotation.y=-o.yaw;poseHuman(o.J,mv,o.ph*9,time,false);
     }
   }
-  var props=[{n:"NHÀ",kind:"house",x:S0-2*P,y:S0,price:5000,own:false,car:false},{n:"NHÀ XE",kind:"garage",x:S0+2*P,y:S0,price:2000,own:false,car:false}];
+  var props=[{n:"NHÀ",kind:"house",x:S0-2*P,y:S0,price:5000,own:false},{n:"NHÀ XE",kind:"garage",x:S0+2*P,y:S0,price:2000,own:false,cars:[]},{n:"SHOWROOM XE",kind:"showroom",x:S0,y:S0+2*P,price:0,own:true},{n:"NHÀ BÁN HOA",kind:"flower",x:S0-4*P,y:S0,price:0,own:true},{n:"TIỆM TRÁI CÂY",kind:"fruit",x:S0-2*P,y:S0+2*P,price:0,own:true}];
+  var CARS=[{n:"Sedan",p:1500,kind:0,color:0x3b6bff},{n:"Thể thao",p:4000,kind:1,color:0xff3b3b},{n:"Bán tải",p:3000,kind:2,color:0x7dff8a}];
+  SNAMES.push("SHOWROOM XE");SCSS.push("#ffd23f");
+  SNAMES.push("NHÀ BÁN HOA");SCSS.push("#ff8fb1");
+  SNAMES.push("ĐẤT CỦA BẠN");SCSS.push("#7dff8a");
+  SNAMES.push("TIỆM TRÁI CÂY");SCSS.push("#9cff57");
+  own[5]=false;ammo[5]=0;
+  WEP.push({n:"TNT",c:300,dmg:0,rate:1.2,rng:260,pel:1,spr:0,am:3});
+  var tnts=[],craters=[],atms=[];
+  var lotsInit=false;
+  function initLots(){
+    lotsInit=true;
+    var picked=0,tries=0;
+    while(picked<4&&tries<800){
+      tries++;
+      var idx=ri(N*N);
+      if(types[idx]!==1)continue;
+      var ix=idx%N,iy=Math.floor(idx/N),lx=ix*P+ROAD+(P-ROAD)/2,ly=iy*P+ROAD+(P-ROAD)/2;
+      var g=new THREE.Group();
+      g.add(mesh(G(150,1,150),L(0x6fb36a),0,0.5,0));
+      g.add(mesh(G(150,6,2),B(0xffffff),0,3,75));g.add(mesh(G(150,6,2),B(0xffffff),0,3,-75));
+      g.add(mesh(G(2,6,150),B(0xffffff),75,3,0));g.add(mesh(G(2,6,150),B(0xffffff),-75,3,0));
+      g.position.set(lx,0,ly);scene.add(g);
+      props.push({n:"ĐẤT TRỐNG",kind:"lot",x:lx,y:ly,price:1500,own:false,built:false,g:g});
+      picked++;
+    }
+  }
+  var HOUSES=[{n:"Nhà nhỏ",p:3000,t:0},{n:"Nhà phố",p:5000,t:1},{n:"Biệt thự",p:12000,t:2}];
+  var menuLot=null;
+  function buildLotHouse(p,t){
+    if(p.hg)p.g.remove(p.hg);
+    var h=new THREE.Group(),col=pick([0xe9d8a6,0xbfd7ea,0xf2b8a2,0xd9e8c4]),i,c,f,w;
+    var WALL=L(col),GLASS=B(0xa8dcff),ROOF=L(pick([0x8b4a3a,0x4a4a5a,0x6a3a2a])),DOOR=L(0x5a3a1a),TRIM=L(0xffffff);
+    if(t===0){
+      h.add(mesh(G(50,34,50),WALL,0,17,0));
+      var rf=new THREE.Mesh(new THREE.ConeGeometry(38,22,4),ROOF);rf.rotation.y=Math.PI/4;rf.position.set(0,45,0);h.add(rf);
+      h.add(mesh(G(56,2,4),TRIM,0,4,0));
+      h.add(mesh(G(12,20,2),DOOR,0,10,25.5));
+      h.add(mesh(G(8,8,1),GLASS,-16,20,25.5));h.add(mesh(G(8,8,1),GLASS,16,20,25.5));
+      h.add(mesh(G(1,8,8),GLASS,25.5,20,-10));h.add(mesh(G(1,8,8),GLASS,25.5,20,10));
+      h.add(mesh(G(6,14,6),L(0x6a4a3a),14,52,-12));
+    } else if(t===1){
+      h.add(mesh(G(44,70,56),WALL,0,35,0));
+      var rf2=new THREE.Mesh(new THREE.ConeGeometry(34,20,4),ROOF);rf2.rotation.y=Math.PI/4;rf2.scale.set(1,1,1.2);rf2.position.set(0,80,0);h.add(rf2);
+      for(f=0;f<3;f++)for(w=0;w<2;w++)h.add(mesh(G(7,8,1),GLASS,-10+w*20,14+f*20,29));
+      h.add(mesh(G(10,18,2),DOOR,0,9,29.5));
+      h.add(mesh(G(44,2,6),TRIM,0,1.5,33));
+    } else {
+      h.add(mesh(G(110,40,80),L(0xf7f1e3),0,20,0));
+      h.add(mesh(G(120,6,90),ROOF,0,43,0));
+      for(i=0;i<4;i++)h.add(mesh(G(4,36,4),TRIM,-44+i*29,18,44));
+      for(i=0;i<6;i++)h.add(mesh(G(10,14,1),GLASS,-48+i*19,24,40.5));
+      h.add(mesh(G(30,20,2),DOOR,0,12,41));
+      h.add(mesh(G(70,1,22),B(0x5ad4ff),0,0.8,-62));
+      h.add(mesh(G(74,2,26),TRIM,0,1.5,-62));
+    }
+    var trunk=L(0x7a5a3a),crown=L(0x3fa35a);
+    [[-62,-62],[62,-62],[-62,62],[62,62]].forEach(function(q){
+      h.add(mesh(G(3,12,3),trunk,q[0],6,q[1]));
+      h.add(mesh(new THREE.SphereGeometry(9,8,6),crown,q[0],16,q[1]));
+    });
+    p.g.add(h);p.hg=h;p.htype=t;
+  }
+  function plantGarden(p,k,ty){
+    if(p.gg)p.g.remove(p.gg);
+    var gg=new THREE.Group(),i,hd;
+    gg.add(mesh(G(90,2,60),L(0x5a3a22),0,1,-40));
+    p.gHeads=[];p.gFruit=[];
+    if(ty==="t"){
+      var tree=new THREE.Group();
+      tree.add(mesh(G(6,22,6),L(0x6a4a2a),0,11,0));
+      tree.add(mesh(new THREE.SphereGeometry(18,10,8),L(TREES[k].leaf),0,32,0));
+      for(i=0;i<6;i++){var fr=mesh(new THREE.SphereGeometry(3.2,8,6),L(TREES[k].c),Math.cos(i)*12,30+(i%3)*4,Math.sin(i*1.7)*12);fr.visible=false;tree.add(fr);p.gFruit.push(fr)}
+      tree.position.set(0,0,-40);tree.scale.setScalar(0.25);gg.add(tree);p.gHeads.push(tree);
+    } else {
+      for(i=0;i<6;i++){
+        hd=new THREE.Group();hd.position.set(-30+(i%3)*30,0,-55+Math.floor(i/3)*20);
+        hd.add(mesh(G(0.8,7,0.8),L(0x3a8f3a),0,3.5,0));
+        hd.add(mesh(new THREE.SphereGeometry(4,8,6),L(FLOWERS[k].c),0,8.5,0));
+        hd.add(mesh(new THREE.SphereGeometry(1.4,6,4),L(0xffd23f),0,8.5,2.8));
+        hd.scale.setScalar(0.1);gg.add(hd);p.gHeads.push(hd);
+      }
+    }
+    p.g.add(gg);p.gg=gg;p.garden={k:k,ty:ty==="t"?"t":"f",grow:0,wat:-99};p.gT=time;
+  }
+  function makeLot(lx,ly){
+    var g=new THREE.Group();
+    g.add(mesh(G(150,1,150),L(0x6fb36a),0,0.5,0));
+    g.add(mesh(G(150,6,2),B(0xffffff),0,3,75));g.add(mesh(G(150,6,2),B(0xffffff),0,3,-75));
+    g.add(mesh(G(2,6,150),B(0xffffff),75,3,0));g.add(mesh(G(2,6,150),B(0xffffff),-75,3,0));
+    g.position.set(lx,0,ly);scene.add(g);
+    var p={n:"ĐẤT TRỐNG",kind:"lot",x:lx,y:ly,price:1500,own:false,built:false,g:g};
+    props.push(p);return p;
+  }
+  function saveGame(){
+    if(!lotsInit)return;
+    try{
+      var data={v:1,money:money,hp:hp,own:own.slice(),ammo:ammo.slice(),inv:inv,gender:(hero&&hero.gender)||"m",ach:achDone.slice(),
+        props:props.map(function(p){
+          var o={kind:p.kind,own:!!p.own,built:!!p.built,htype:p.htype||0,x:p.x,y:p.y};
+          if(p.cars)o.cars=p.cars.map(function(c){return{kind:c.kind,color:c.color}});
+          if(p.garden)o.garden={k:p.garden.k,ty:p.garden.ty,grow:p.garden.grow};
+          return o;
+        })};
+      localStorage.setItem("gta6save",JSON.stringify(data));
+    }catch(e){}
+  }
+  function applyLot(lp,sp){
+    lp.own=!!sp.own;lp.built=!!sp.built;
+    if(lp.built)buildLotHouse(lp,sp.htype||0);
+    if(sp.garden){plantGarden(lp,sp.garden.k,sp.garden.ty||"f");lp.garden.grow=sp.garden.grow||0}
+  }
+  function loadGame(){
+    var raw=null;try{raw=localStorage.getItem("gta6save")}catch(e){}
+    if(!raw)return false;
+    var d;try{d=JSON.parse(raw)}catch(e){return false}
+    if(!d||!Array.isArray(d.props))return false;
+    money=+d.money||0;hp=+d.hp||100;
+    var i;
+    if(Array.isArray(d.own))for(i=0;i<own.length;i++)own[i]=!!d.own[i];
+    if(Array.isArray(d.ammo))for(i=0;i<ammo.length;i++)ammo[i]=+d.ammo[i]||0;
+    if(Array.isArray(d.ach)){achDone.length=0;d.ach.forEach(function(x){achDone.push(x)})}
+    d.props.forEach(function(sp){
+      if(sp.kind==="lot"){applyLot(makeLot(sp.x,sp.y),sp);return}
+      var p=findProp(sp.kind);
+      if(!p)return;
+      p.own=!!sp.own;
+      if(Array.isArray(sp.cars))p.cars=sp.cars.slice();
+    });
+    if(d.inv){["fl","fr","sdF","sdT"].forEach(function(key){if(Array.isArray(d.inv[key]))for(var q=0;q<inv[key].length;q++)inv[key][q]=+d.inv[key][q]||0})}
+    if(d.gender)applyGender(d.gender);
+    return true;
+  }
+  function lotItems(){
+    var L0=menuLot,r=[];
+    if(!L0)return r;
+    if(!L0.built){HOUSES.forEach(function(h,i){r.push({n:"Xây "+h.n+" ($"+h.p+")",p:h.p,k:"house",i:i})})}
+    else{r.push({n:"Về nhà hồi máu",p:0,k:"rest"})}
+    if(!L0.garden){
+      FLOWERS.forEach(function(f,i){if(inv.sdF[i]>0)r.push({n:"Trồng "+f.n+" (còn "+inv.sdF[i]+")",p:0,k:"plant",i:i,ty:"f"})});
+      TREES.forEach(function(t,i){if(inv.sdT[i]>0)r.push({n:"Trồng "+t.n+" (còn "+inv.sdT[i]+")",p:0,k:"plant",i:i,ty:"t"})});
+      if(!r.some(function(x){return x.k==="plant"}))r.push({n:"Chưa có hạt giống, mua ở tiệm",p:0,k:"none"});
+    }
+    else if(L0.garden.grow>=1){r.push({n:"Thu hoạch "+(L0.garden.ty==="t"?TREES[L0.garden.k].n:FLOWERS[L0.garden.k].n),p:0,k:"harvest"})}
+    else{r.push({n:"Tưới ("+Math.round(L0.garden.grow*100)+"%)",p:0,k:"water"})}
+    return r;
+  }
+  function throwTnt(){
+    ammo[5]--;fireT=1.2;scareT=3;
+    var tx=px+Math.cos(camYaw)*220,ty=py+Math.sin(camYaw)*220;
+    var tm=mesh(G(3,3,3),B(0xff3b3b),tx,4,ty);scene.add(tm);
+    tnts.push({x:tx,y:ty,at:time+1.0,m:tm});
+    say("Ném TNT! Nổ sau 1 giây.");
+  }
+  function explode(x,y){
+    var i,o;
+    for(i=0;i<civs.length;i++){o=civs[i];if(!o.dying&&hyp(o.x-x,o.y-y)<160)kill(o,false)}
+    for(i=cops.length-1;i>=0;i--){o=cops[i];if(!o.tank&&hyp(o.x-x,o.y-y)<120)killCop(o)}
+    for(i=officers.length-1;i>=0;i--){o=officers[i];if(hyp(o.x-x,o.y-y)<120){scene.remove(o.J.g);officers.splice(i,1);money+=100}}
+    for(i=0;i<cars.length;i++){o=cars[i];if(hyp(o.x-x,o.y-y)<140){o.dmg+=3;o.crumple=Math.min(1,(o.crumple||0)+0.4)}}
+    if(hyp(px-x,py-y)<90&&!inCar){hp-=45;heroDown=Math.max(heroDown,1.0)}
+    addWanted(1);
+    var cr=mesh(new THREE.CircleGeometry(70,24),L(0x1a1a1a),x,0.6,y);cr.rotation.x=-HP;scene.add(cr);craters.push(cr);
+    var rim=mesh(new THREE.RingGeometry(66,80,24),B(0x5a4a3a),x,0.7,y);rim.rotation.x=-HP;scene.add(rim);craters.push(rim);
+    if(craters.length>40){var old=craters.splice(0,2);old.forEach(function(m){scene.remove(m)})}
+    for(i=0;i<8;i++)puff(x+(rr()-0.5)*90,25+rr()*20,y+(rr()-0.5)*90);
+    shake=Math.max(shake,1);beep(70,400,"sawtooth",0.1);
+    pop(x,y,"BÙM!","#ff9a3c");
+  }
+  function initATM(){
+    var o=[0,0],i;
+    for(i=0;i<8;i++){
+      roadPoint(o);
+      var g=new THREE.Group();
+      g.add(mesh(G(9,22,8),L(0x3a4a5a),0,11,0));g.add(mesh(G(6,5,0.6),B(0x7dff8a),0,15,4.3));g.add(mesh(G(7,1.5,1),L(0x222222),0,-0.2,0));
+      g.position.set(o[0],0,o[1]);scene.add(g);
+      atms.push({x:o[0],y:o[1],g:g,hp:3,ok:true,at:0});
+    }
+  }
+  function nearRemote(){var best=null,bd=130;for(var id in net.players){var R=net.players[id];var d=hyp(R.x-px,R.y-py);if(d<bd){bd=d;best=R}}return best}
+  function giftAct(){
+    if(hero.flowerKind==null||!net.ok)return false;
+    var R=nearRemote();if(!R)return false;
+    net.giftSeq=(net.giftSeq||0)+1;
+    net.gift={to:R.id,k:hero.flowerKind,s:net.giftSeq,t:1.5};
+    say("Đã tặng hoa cho "+(R.nm||"bạn")+"!");
+    setFlower(null);return true;
+  }
+  var FLOWERS=[{n:"Hoa hồng",p:50,v:120,c:0xff3b6b},{n:"Hoa cúc",p:30,v:70,c:0xffd23f},{n:"Hướng dương",p:40,v:90,c:0xffa500},{n:"Tulip",p:45,v:100,c:0xff6fa8},{n:"Hoa lan",p:60,v:140,c:0xd9a6ff},{n:"Hoa sen",p:55,v:130,c:0xffb3c6},{n:"Cẩm tú cầu",p:65,v:150,c:0x4aa8ff},{n:"Hoa đào",p:35,v:80,c:0xff9bb8},{n:"Hoa mai",p:40,v:95,c:0xffe03a},{n:"Lavender",p:50,v:115,c:0xa58cff}];
+  var TREES=[{n:"Cây cam",p:80,v:60,c:0xff9a3c,leaf:0x3fa35a},{n:"Cây táo",p:90,v:70,c:0xd7263d,leaf:0x3fa35a},{n:"Cây xoài",p:100,v:80,c:0xffc845,leaf:0x2f8f4a},{n:"Cây nhãn",p:85,v:65,c:0xc8a165,leaf:0x3fa35a},{n:"Cây dừa",p:110,v:90,c:0x9ccf6a,leaf:0x2f8f4a}];
+  var inv={fl:[0,0,0,0,0,0,0,0,0,0],fr:[0,0,0,0,0],sdF:[0,0,0,0,0,0,0,0,0,0],sdT:[0,0,0,0,0]};
+  function makeBouquet(col){
+    var g=new THREE.Group(),i,a,x,z,st,hd,pal=[col,0xffffff,col,0xffe066,col];
+    var paper=new THREE.Mesh(new THREE.ConeGeometry(5.6,10,10),L(0xf6d4e4));paper.rotation.x=Math.PI;paper.position.set(0,-6,0);g.add(paper);
+    for(i=0;i<6;i++){
+      a=i/6*TWO_PI;x=Math.cos(a)*1.4;z=Math.sin(a)*1.4;
+      st=mesh(G(0.35,9,0.35),L(0x3a8f3a),x*0.6,-1,z*0.6);st.rotation.x=z*0.08;st.rotation.z=-x*0.08;g.add(st);
+      hd=mesh(new THREE.SphereGeometry(2.1,8,6),L(pal[i%pal.length]),x*1.1,3.4,z*1.1);g.add(hd);
+      g.add(mesh(G(2.2,0.4,1.2),L(0x3a8f3a),x*0.9,-2.5,z*0.9));
+    }
+    g.add(mesh(new THREE.SphereGeometry(1.5,8,6),L(0xffd23f),0,4.6,0));
+    g.add(mesh(G(7.2,0.9,0.9),B(0xd6336c),0,-1.8,0));
+    return g;
+  }
+  function setFlower(c){
+    if(hero.flowerG){hero.elL.remove(hero.flowerG);hero.flowerG=null}
+    hero.flowerKind=c;
+    if(c!=null){hero.flowerG=makeBouquet(c);hero.flowerG.position.set(0,-6,0);hero.elL.add(hero.flowerG)}
+  }
+  function findProp(k){for(var i=0;i<props.length;i++)if(props[i].kind===k)return props[i];return null}
+  function exitGame(){confirmExit()}
+  var TOD_NAMES=["SÁNG","TRƯA","CHIỀU","ĐÊM"];
+  function skipTime(){var k=(Math.floor(tod*4+0.001)+1)%4;tod=k/4;say("Đã chuyển sang "+TOD_NAMES[k].toLowerCase())}
+  function drawTime(){
+    label(TOD_NAMES[Math.floor(tod*4+0.001)%4],width/2,24*u,16*u,"#ffffff");
+  }
+  function drawNames(){
+    for(var id in net.players){
+      var R=net.players[id],dx=R.x-px,dy=R.y-py;
+      if(dx*dx+dy*dy>900*900)continue;
+      var v=new THREE.Vector3(R.x,R.c?50:70,R.y).project(camera);
+      if(v.z>1)continue;
+      label(String(R.nm||"Bạn").slice(0,12),(v.x+1)/2*width,(1-v.y)/2*height,13*u,"#7dff8a");
+    }
+  }
   var ACH=[
     {id:"kill1",n:"Máu lạnh đầu tiên",d:"Hạ một người đi đường"},
     {id:"car1",n:"Tay lái lụa",d:"Lên được một chiếc xe"},
@@ -473,13 +713,27 @@ var game=(function(){
   function propAct(){
     var p=nearProp();
     if(!p)return false;
+    if(p.kind==="showroom"){menuOpen=4;return true}
+    if(p.kind==="flower"){menuOpen=5;return true}
+    if(p.kind==="fruit"){menuOpen=7;return true}
+    if(p.kind==="lot"){
+      if(!p.own){
+        if(money<p.price){say("Không đủ tiền mua đất ($"+p.price+")");return true}
+        money-=p.price;p.own=true;say("Đã mua đất! Bấm lại để xây nhà hoặc trồng hoa.");return true;
+      }
+      menuLot=p;menuOpen=6;return true;
+    }
     if(!p.own){
       if(money<p.price){say("Không đủ tiền mua "+p.n+" ($"+p.price+")");return true}
       money-=p.price;p.own=true;unlockAch(p.kind==="house"?"house":"garage");say("Đã mua "+p.n+"!");return true;
     }
     if(p.kind==="house"){hp=100;heroDown=0;say("Về nhà nghỉ ngơi, máu đầy lại!");return true}
-    if(inCar){scene.remove(inCar.mesh);cars.splice(cars.indexOf(inCar),1);inCar=null;px=p.x+60;py=p.y;p.car=true;say("Đã cất xe vào nhà xe.");return true}
-    if(p.car){var c=mkCar(p.x+70,p.y,0,0x00bfff,false);c.s=0;c.ai=false;cars.push(c);p.car=false;say("Đã lấy xe ra khỏi nhà xe!");return true}
+    if(inCar){p.cars.push({kind:inCar.kind,color:inCar.color});scene.remove(inCar.mesh);cars.splice(cars.indexOf(inCar),1);inCar=null;px=p.x+60;py=p.y;say("Đã cất xe vào nhà xe. Đang có "+p.cars.length+" xe.");return true}
+    if(p.cars.length){
+      var d=p.cars.shift();var c=mkCar(p.x+70,p.y,0,d.color,false);
+      scene.remove(c.mesh);c.kind=d.kind;c.mesh=buildCarMesh(c);c.mesh.visible=false;scene.add(c.mesh);
+      c.s=0;c.ai=false;cars.push(c);say("Đã lấy xe ra khỏi nhà xe!");return true;
+    }
     return false;
   }
   function addTattoo(i){
@@ -494,11 +748,20 @@ var game=(function(){
     var show=wi>0&&!inCar&&heroDown<=0;
     g.visible=show;
     if(show&&heroPunch<=0){hero.shR.rotation.z=1.42;hero.elR.rotation.z=0.12}
+    var fl=!!hero.flowerKind&&!inCar&&wi===0&&heroDown<=0;
+    if(hero.flowerG)hero.flowerG.visible=fl;
+    if(fl){hero.shL.rotation.z=1.0;hero.elL.rotation.z=0.5}
+    if(!lotsInit&&types.length){lotsInit=true;if(!loadGame())initLots()}
+    for(var pi=0;pi<props.length;pi++){var PL=props[pi];if(PL.kind==="lot"&&PL.garden){var dtt=time-(PL.gT||time);PL.gT=time;var isT=PL.garden.ty==="t";PL.garden.grow=Math.min(1,PL.garden.grow+dtt/(isT?200:90));if(isT){if(PL.gHeads[0])PL.gHeads[0].scale.setScalar(0.25+0.75*PL.garden.grow);for(var fi=0;fi<PL.gFruit.length;fi++)PL.gFruit[fi].visible=PL.garden.grow>=0.98}else{var gsc=0.1+0.9*PL.garden.grow;for(var hi=0;hi<PL.gHeads.length;hi++)PL.gHeads[hi].scale.setScalar(gsc)}}}
+    if(!atms.length)initATM();
+    for(var ti=tnts.length-1;ti>=0;ti--){if(time>=tnts[ti].at){scene.remove(tnts[ti].m);explode(tnts[ti].x,tnts[ti].y);tnts.splice(ti,1)}}
+    for(var ai=0;ai<atms.length;ai++){var A=atms[ai];if(!A.ok&&time>=A.at){A.ok=true;A.hp=3;A.g.visible=true}}
     if(money>=5000)unlockAch("rich");
   }
   function netSt(t){$("netSt").textContent=t}
   function applyGender(g){
     if(!hero)return;
+    hero.gender=g;
     var f=g==="f",hc=0x2a1a10;
     if(!hero.hairBack){
       hero.hairBack=mesh(G(5,20,14),L(hc),-4.5,0,0);hero.hd.add(hero.hairBack);
@@ -575,7 +838,8 @@ var game=(function(){
     for(var i=0;i<6;i++)r+=ch.charAt(ri(ch.length));
     return r;
   }
-  function myState(seatId){
+  function myState(seatId){var st=myState0(seatId);st.gf=net.gift?{to:net.gift.to,k:net.gift.k,s:net.gift.s}:null;return st}
+  function myState0(seatId){
     var c=inCar;
     var pid=(net.pc&&net.pc.id)||"";
     if(c)return{id:net.myId,nm:myName,pid:pid,x:c.x,y:c.y,h:c.h,c:1,m:0,rq:"",rd:0,dr:seatId||""};
@@ -645,7 +909,9 @@ var game=(function(){
   });
   function netStep(dt){
     if(!net.ok){net.want="";net.riding=false;if(Object.keys(net.ghosts).length)clearGhosts();return}
+    if(net.gift){net.gift.t-=dt;if(net.gift.t<=0)net.gift=null}
     if(net.isHost){net.players={};var now=performance.now();for(var k in net.others){var o=net.others[k];if(now-o.t>3000)delete net.others[k];else net.players[k]=o.s}}
+    for(var gid in net.players){var GR=net.players[gid];if(GR.gf&&GR.gf.to===net.myId){var gk=GR.id+":"+GR.gf.s;if(!net.seenGift)net.seenGift={};if(!net.seenGift[gk]){net.seenGift[gk]=1;setFlower(GR.gf.k);say((GR.nm||"Bạn")+" tặng bạn bó hoa!")}}}
     var seatId="";
     if(inCar){for(var q in net.players){if(net.players[q].rq===net.myId){seatId=q;break}}}
     var me=myState(seatId);
@@ -797,6 +1063,7 @@ var game=(function(){
 
   function doAction(){
     if(!inShop&&!inCar&&rideAct())return;
+    if(!inShop&&!inCar&&giftAct())return;
     if(!inShop&&propAct())return;
     if(shopAction())return;
     var car=inCar;
@@ -813,7 +1080,7 @@ var game=(function(){
     if(!best){say("Không có xe nào gần đây! Đi bộ cho khỏe.");return}
     var moving=best.ai&&best.s>60;
     best.s=0;best.ai=false;inCar=best;unlockAch("car1");say(moving?"Bác tài ơi cho em mượn xe!":"Mượn xe tí nha, chiều trả!");
-    if(rr()<(moving?0.6:0.35))addWanted(1);
+    if(moving&&rr()<0.2)addWanted(1);
   }
   function doSecond(){
     var car=inCar;
@@ -821,6 +1088,13 @@ var game=(function(){
     if(wi>0&&!inShop){fire();return}
     if(cdown>0)return;
     cdown=0.35;heroPunch=0.25;
+    var at=null,atd=70,ai2;
+    for(ai2=0;ai2<atms.length;ai2++){var AT=atms[ai2];if(!AT.ok)continue;var atdist=hyp(AT.x-px,AT.y-py);if(atdist<atd){atd=atdist;at=AT}}
+    if(at&&!inCar){
+      at.hp-=1;beep(300,50,"square",0.05);pop(at.x,at.y,"Bốp! ("+at.hp+")","#ffffff");
+      if(at.hp<=0){at.ok=false;at.g.visible=false;at.at=time+60;var gain=1500+Math.floor(rr()*6)*100;money+=gain;addWanted(1);pop(at.x,at.y,"+$"+gain,"#7dff8a")}
+      return;
+    }
     var ob=null,obd=110,oi,nb=null,nbd=110;
     for(oi=0;oi<officers.length;oi++){var od=hyp(officers[oi].x-px,officers[oi].y-py);if(od<obd){obd=od;ob=officers[oi]}}
     if(inShop){for(oi=0;oi<inShop.npcs.length;oi++){var nd=hyp(inShop.npcs[oi].x-px,inShop.npcs[oi].z-py);if(nd<nbd){nbd=nd;nb=inShop.npcs[oi]}}}
@@ -853,8 +1127,8 @@ var game=(function(){
     cash.push({x:m.x,y:m.y,v:40+ri(160)});
     if(cash.length>250)cash.shift();
     pop(m.x,m.y,byCar?pick(hitTxt):pick(punchTxt),"#ffffff");
-    if(byCar){beep(150,120,"sawtooth",0.07);shake=Math.max(shake,0.35);if(rr()<0.6)addWanted(1)}
-    else if(rr()<0.5)addWanted(1);
+    if(byCar){beep(150,120,"sawtooth",0.07);shake=Math.max(shake,0.35);if(rr()<0.3)addWanted(1)}
+    else if(rr()<0.2)addWanted(1);
   }
   function busted(){
     var lost=Math.floor(money/3);money-=lost;wanted=0;bust=0;
@@ -960,6 +1234,7 @@ var game=(function(){
     if(inCar||inShop||heroDown>0||fireT>0||wi===0||net.riding)return;
     var w=WEP[wi];
     if(ammo[wi]<=0){say("Hết đạn! Ghé tiệm súng mua thêm.");wi=0;return}
+    if(wi===5){throwTnt();return}
     fireT=w.rate;ammo[wi]--;scareT=3;
     var base=camYaw,best=null,bd=1e9,i,m,a,da,d;
     function cand(x,y){a=Math.atan2(y-py,x-px);da=Math.abs(angleDiff(a,base));d=hyp(x-px,y-py);if(da<0.55&&d<w.rng&&d*(1+da*2)<bd&&!wallBetween(px,py,x,y)){bd=d*(1+da*2);best=a}}
@@ -1053,7 +1328,7 @@ var game=(function(){
     var hm=mesh(new THREE.SphereGeometry(7,10,8),skin,0,6,0);hm.scale.set(1,1.12,0.95);hd.add(hm);
     hd.add(mesh(new THREE.SphereGeometry(7.5,12,8,0,TWO_PI,0,HP*0.95),hair,-0.4,7.8,0));addFace(hd,skin,hair);
     function arm(z){var s=new THREE.Group();s.position.set(0,18,z);sp.add(s);s.add(mesh(G(5.4,11,5.4),shirt,0,-5,0));
-      var e=new THREE.Group();e.position.y=-10;s.add(e);e.add(mesh(G(4.4,10,4.4),skin,0,-5,0));e.add(mesh(G(4.8,4.6,4.8),skin,0,-11,0));return[s,e]}
+      var e=new THREE.Group();e.position.y=-10;s.add(e);e.add(mesh(G(4.4,10,4.4),skin,0,-5,0));e.add(mesh(G(4.6,5,4.4),skin,0,-11,0));e.add(mesh(G(4.8,2.2,4.6),skin,0,-14.2,0));return[s,e]}
     function leg(z){var h=new THREE.Group();h.position.set(0,-2,z);root.add(h);h.add(mesh(G(6.8,17,7),pant,0,-8.5,0));
       var k=new THREE.Group();k.position.y=-17;h.add(k);k.add(mesh(G(5.6,17,6),pant,0,-8.5,0));k.add(mesh(G(11,4,7.5),L(0x222222),2,-17,0));return[h,k]}
     var a1=arm(-10.6),a2=arm(10.6),l1=leg(-4),l2=leg(4);
@@ -1139,7 +1414,8 @@ var game=(function(){
   }
   function aLabel(car){
     if(inShop){if(hyp(px-inShop.cx,py-(inShop.cz+inShop.hw-18))<80)return"RA NGOÀI";if(hyp(px-inShop.cx,py-(inShop.cz-20))<130)return"MUA HÀNG";return"..."}
-    var pr=nearProp();if(pr&&!inShop){if(!pr.own)return"MUA "+pr.n+" $"+pr.price;if(pr.kind==="house")return"VÀO NHÀ";if(car)return"CẤT XE";if(pr.car)return"LẤY XE"}
+    var pr=nearProp();if(pr&&!inShop){if(pr.kind==="showroom")return"MUA XE";if(pr.kind==="flower")return"TIỆM HOA";if(pr.kind==="fruit")return"TIỆM TRÁI CÂY";if(pr.kind==="lot")return !pr.own?"MUA ĐẤT $"+pr.price:"ĐẤT CỦA BẠN";if(!pr.own)return"MUA "+pr.n+" $"+pr.price;if(pr.kind==="house")return"VÀO NHÀ";if(car)return"CẤT XE";if(pr.cars.length)return"LẤY XE"}
+    if(!car&&hero.flowerKind!=null&&nearRemote())return"TẶNG HOA";
     if(!car&&net.want)return net.riding?"XUỐNG XE":"HỦY XIN";
     if(!car&&canRide())return"LÊN XE BẠN";
     if(!car&&nearShopDoor())return"VÀO TIỆM";
@@ -1150,13 +1426,22 @@ var game=(function(){
     if(t===0){for(i=1;i<WEP.length;i++){var w=WEP[i];r.push(own[i]?{n:"Mua đạn "+w.n+" (+"+w.am+")",p:Math.round(w.c*0.25),k:"a",i:i}:{n:"Mua "+w.n,p:w.c,k:"w",i:i})}}
     else if(t===1){r=[{n:"Tô phở bò (+35 máu)",p:50,k:"h",v:35},{n:"Bánh mì thịt (+20 máu)",p:30,k:"h",v:20},{n:"Trà đá (+8 máu)",p:10,k:"h",v:8},{n:"Nước tăng lực (đầy nitro)",p:40,k:"n"}]}
     else if(t===2)r=[{n:"Xăm tay trái (rồng đỏ)",p:300,k:"t",i:0},{n:"Xăm tay phải (đầu lâu)",p:300,k:"t",i:1},{n:"Xăm cổ (hoa teal)",p:250,k:"t",i:2},{n:"Đổi áo mới",p:100,k:"s"},{n:"Đổi quần mới",p:80,k:"p"}];
+    else if(t===6)r=lotItems();
+    else if(t===5){r=FLOWERS.map(function(f,i){return{n:"Hạt "+f.n+" ($"+f.p+")",p:f.p,k:"seedF",i:i}});var sv=0;inv.fl.forEach(function(q,i){sv+=q*FLOWERS[i].v});r.push({n:"Bán hoa đã thu hoạch (+$"+sv+")",p:0,k:"sellF"});r.push({n:"Cầm 1 bó hoa trong kho",p:0,k:"holdF"});r.push({n:"Bỏ hoa đang cầm",p:0,k:"nofl"})}
+    else if(t===7){r=TREES.map(function(f,i){return{n:"Cây giống "+f.n+" ($"+f.p+")",p:f.p,k:"seedT",i:i}});var tv=0;inv.fr.forEach(function(q,i){tv+=q*TREES[i].v});r.push({n:"Bán trái cây (+$"+tv+")",p:0,k:"sellT"})}
+    else if(t===4)r=CARS.map(function(c,i){return{n:"Mua "+c.n+" ($"+c.p+")",p:c.p,k:"car",i:i}});
     else r=[{n:"Hộp đạn cho mọi súng đang có",p:150,k:"A"},{n:"Băng y tế (+50 máu)",p:70,k:"h",v:50},{n:"Bánh mì thịt (+20 máu)",p:30,k:"h",v:20},{n:"Nước suối (+8 máu)",p:8,k:"h",v:8}];
     return r;
   }
   function menuRects(){
-    var it=menuItems(),r=[],rh=58*u,x1=width/2-230*u,x2=width/2+230*u,y0=height*0.2,i;
-    for(i=0;i<it.length;i++)r.push({x1:x1,x2:x2,y1:y0+i*(rh+8*u),y2:y0+i*(rh+8*u)+rh,it:it[i]});
-    r.push({x1:x1,x2:x2,y1:y0+it.length*(rh+8*u),y2:y0+it.length*(rh+8*u)+rh,it:null});
+    var it=menuItems(),r=[],n=it.length+1,cols=n>5?2:1,rows=Math.ceil(n/cols),i,col,row,x1,x2,yy;
+    var rh=Math.min(58*u,(height*0.66)/rows-8*u),y0=height*0.2;
+    for(i=0;i<n;i++){
+      if(cols===2){col=Math.floor(i/rows);row=i%rows;x1=col===0?width/2-245*u:width/2+5*u;x2=col===0?width/2-5*u:width/2+245*u}
+      else{row=i;x1=width/2-230*u;x2=width/2+230*u}
+      yy=y0+row*(rh+8*u);
+      r.push({x1:x1,x2:x2,y1:yy,y2:yy+rh,it:i<it.length?it[i]:null});
+    }
     return r;
   }
   function menuHit(x,y){
@@ -1177,6 +1462,20 @@ var game=(function(){
         else if(it.k==="a"){ammo[it.i]+=WEP[it.i].am;say("Đã mua đạn "+WEP[it.i].n)}
         else if(it.k==="h"){hp=Math.min(100,hp+it.v);say("Ngon! +"+it.v+" máu")}
         else if(it.k==="n"){nitro=1;nitroLock=false;say("Nitro đầy bình!")}
+        else if(it.k==="house"){menuLot.built=true;buildLotHouse(menuLot,HOUSES[it.i].t);say("Đã xây "+HOUSES[it.i].n+" trên đất của bạn!")}
+        else if(it.k==="rest"){hp=100;heroDown=0;say("Về nhà nghỉ ngơi, máu đầy lại!")}
+        else if(it.k==="plant"){inv[it.ty==="t"?"sdT":"sdF"][it.i]--;plantGarden(menuLot,it.i,it.ty);say("Đã trồng "+(it.ty==="t"?TREES[it.i].n:FLOWERS[it.i].n)+". Nhớ tưới nhé!")}
+        else if(it.k==="none"){say("Mua hạt giống ở nhà bán hoa hoặc tiệm trái cây trước đã.")}
+        else if(it.k==="water"){var gd=menuLot.garden;gd.grow=Math.min(1,gd.grow+0.15);gd.wat=time;say("Đã tưới hoa!")}
+        else if(it.k==="harvest"){var hv=menuLot.garden;if(hv.ty==="t"){inv.fr[hv.k]+=3;hv.grow=0;hv.wat=-99;say("Thu được 3 quả "+TREES[hv.k].n+". Mang ra tiệm trái cây để bán!")}else{inv.fl[hv.k]+=1;menuLot.g.remove(menuLot.gg);menuLot.garden=null;menuLot.gg=null;menuLot.gHeads=null;menuLot.gFruit=null;say("Thu hoạch "+FLOWERS[hv.k].n+". Mang ra tiệm hoa để bán!")}}
+        else if(it.k==="seedF"){inv.sdF[it.i]++;say("Đã mua hạt "+FLOWERS[it.i].n+".")}
+        else if(it.k==="seedT"){inv.sdT[it.i]++;say("Đã mua "+TREES[it.i].n+".")}
+        else if(it.k==="sellF"){var g1=0;inv.fl.forEach(function(q,i){g1+=q*FLOWERS[i].v;inv.fl[i]=0});money+=g1;say(g1?"Đã bán hoa +$"+g1:"Chưa có hoa để bán")}
+        else if(it.k==="sellT"){var g2=0;inv.fr.forEach(function(q,i){g2+=q*TREES[i].v;inv.fr[i]=0});money+=g2;say(g2?"Đã bán trái cây +$"+g2:"Chưa có trái cây để bán")}
+        else if(it.k==="holdF"){var hi2=-1;for(var q2=0;q2<inv.fl.length;q2++)if(inv.fl[q2]>0){hi2=q2;break}if(hi2<0){say("Chưa có hoa trong kho")}else{inv.fl[hi2]--;setFlower(FLOWERS[hi2].c);say("Đang cầm "+FLOWERS[hi2].n+"!")}}
+        else if(it.k==="fl"){setFlower(FLOWERS[it.i].c);say("Đã mua "+FLOWERS[it.i].n+"! Đang cầm trên tay.")}
+        else if(it.k==="nofl"){setFlower(null);say("Đã bỏ hoa xuống.")}
+        else if(it.k==="car"){var gar=findProp("garage");if(!gar||!gar.own){money+=it.p;say("Mua nhà xe trước đã!");return}gar.cars.push({kind:CARS[it.i].kind,color:CARS[it.i].color});say("Đã mua "+CARS[it.i].n+"! Xe đã vào nhà xe.")}
         else if(it.k==="t"){addTattoo(it.i);say("Xăm xong, ngầu chưa!")}
         else if(it.k==="s"){hero.shirtMat.color.setHex(pick(palette));say("Áo mới nhìn bảnh quá!")}
         else{hero.jeanMat.color.setHex(pick([0x2f6f9f,0x222222,0x6b4f3a,0x8d2b2b,0x3a7d44]));say("Quần mới!")}
@@ -1514,6 +1813,7 @@ var game=(function(){
     c.fillStyle="#f4a14a";for(i=3;i<N;i+=6){c.fillRect(mx0,my0+i*P*sc,S,ROAD*sc);c.fillRect(mx0+i*P*sc,my0,ROAD*sc,S)}
     var SSH=["TIỆM SÚNG","PHỞ","SHOP ÁO","TẠP HÓA"];for(i=0;i<shops.length;i++){var sh=shops[i],sx=mx0+sh.x*sc,sy=my0+sh.z*sc;c.fillStyle=SCSS[sh.type];c.beginPath();c.arc(sx,sy,(sh.type===0?9:6)*u,0,TWO_PI);c.fill();c.strokeStyle="#fff";c.lineWidth=2*u;c.stroke();label(SSH[sh.type],sx,sy-13*u,13*u,"#fff")}
     for(i=0;i<props.length;i++){var pp=props[i],ppx=mx0+pp.x*sc,ppy=my0+pp.y*sc;c.fillStyle=pp.own?"#7dff8a":"#ffffff";c.fillRect(ppx-6*u,ppy-6*u,12*u,12*u);label(pp.n,ppx,ppy-10*u,12*u,"#fff")}
+    for(var rid in net.players){var RP=net.players[rid],rpx=mx0+RP.x*sc,rpy=my0+RP.y*sc;c.fillStyle="#7dff8a";c.beginPath();c.arc(rpx,rpy,6*u,0,TWO_PI);c.fill();label(String(RP.nm||"Bạn").slice(0,12),rpx,rpy-10*u,12*u,"#7dff8a")}
     for(i=0;i<cops.length;i++){c.fillStyle=(Math.floor(time*6)%2)?"#ff3b3b":"#3b6bff";c.beginPath();c.arc(mx0+cops[i].x*sc,my0+cops[i].y*sc,3*u,0,TWO_PI);c.fill()}
     if(mission){c.fillStyle="#ffd23f";c.beginPath();c.arc(mx0+mission.x*sc,my0+mission.y*sc,6*u,0,TWO_PI);c.fill();c.strokeStyle="#fff";c.lineWidth=2*u;c.stroke()}
     if(wp){c.strokeStyle="#fff";c.lineWidth=3*u;c.beginPath();c.arc(mx0+wp.x*sc,my0+wp.y*sc,8*u,0,TWO_PI);c.stroke()}
@@ -1554,6 +1854,7 @@ var game=(function(){
     if(wp)dot(wp.x,wp.y,4,"#ffffff");
     for(i=0;i<shops.length;i++){if(shops[i].type===0||hyp(shops[i].x-px,shops[i].z-py)*sc<R-5*u)dot(shops[i].x,shops[i].z,shops[i].type===0?4.5:3,SCSS[shops[i].type])}
     for(i=0;i<props.length;i++)dot(props[i].x,props[i].y,4,props[i].own?"#7dff8a":"#ffffff");
+    for(var rid2 in net.players)dot(net.players[rid2].x,net.players[rid2].y,4.5,"#7dff8a");
     for(i=0;i<helis.length;i++)dot(helis[i].x,helis[i].y,4,"#5af");
     c.restore();
     c.lineWidth=3*u;c.strokeStyle="rgba(255,255,255,0.85)";c.beginPath();c.arc(mx0,my0,R,0,TWO_PI);c.stroke();
@@ -1640,7 +1941,8 @@ var game=(function(){
     ensureAudio();e.preventDefault();
     var p=pos(e),x=p[0],y=p[1];
     try{hud.setPointerCapture(e.pointerId)}catch(_){}
-    if(mapOpen){mapTap(x,y)}else if(menuOpen!==null&&menuHit(x,y)){menuTap(x,y)}else if(hit(x,y,eX,eY,eR))show("menu");
+    if(!mapOpen&&menuOpen===null&&y<60*u&&Math.abs(x-width/2)<120*u){skipTime()}
+    else if(mapOpen){mapTap(x,y)}else if(menuOpen!==null&&menuHit(x,y)){menuTap(x,y)}else if(hit(x,y,eX,eY,eR))exitGame();
     else if(hit(x,y,dX,dY,dR))nextWeapon();else if(hit(x,y,mX,mY,mR))mapOpen=true;
     else if(hit(x,y,aX,aY,aR))doAction();
     else if(hit(x,y,bX,bY,bR)){doSecond();fireId=e.pointerId}
@@ -1668,7 +1970,7 @@ var game=(function(){
     else if(e.code==="KeyR"){camYaw+=0.25;camManualT=2.5}
     else if(e.code==="KeyG"){nextWeapon()}
     else if(e.code==="KeyM"){mapOpen=!mapOpen}
-    else if(e.code==="Escape"){if(mapOpen||menuOpen!==null){mapOpen=false;menuOpen=null}else show("menu")}
+    else if(e.code==="Escape"){if(mapOpen||menuOpen!==null){mapOpen=false;menuOpen=null}else exitGame()}
     else if(e.code.indexOf("Arrow")===0)e.preventDefault();
   });
   window.addEventListener("keyup",function(e){keys[e.code]=false});
@@ -1682,7 +1984,7 @@ var game=(function(){
       fAcc+=dt;fN++;
       if(fN>=90){var av=fAcc/fN;fAcc=0;fN=0;if(av>0.025&&prNow>0.7){prNow=Math.max(0.7,prNow-0.15);renderer.setPixelRatio(prNow);renderer.setSize(width,height,false)}else if(av<0.019&&prNow<prMax){prNow=Math.min(prMax,prNow+0.1);renderer.setPixelRatio(prNow);renderer.setSize(width,height,false)}}
       renderer.render(scene,camera);
-      c.clearRect(0,0,width,height);drawPops();drawHud();if(menuOpen!==null)drawMenu();if(mapOpen)drawMap();
+      c.clearRect(0,0,width,height);drawPops();drawHud();drawNames();drawTime();if(menuOpen!==null)drawMenu();if(mapOpen)drawMap();
     }
     requestAnimationFrame(loop);
   }
@@ -1733,8 +2035,12 @@ var game=(function(){
   });
   $("friendNoteX").addEventListener("click",function(){$("friendNote").hidden=true});
   net.myId=myCode;renderFriends();startPresence();
-  $("chatOpen").addEventListener("click",function(){$("chatBox").hidden=false;$("chatOpen").hidden=true});
-  $("chatHide").addEventListener("click",function(){$("chatBox").hidden=true;$("chatOpen").hidden=false});
+  setInterval(saveGame,10000);
+  document.addEventListener("visibilitychange",function(){if(document.hidden)saveGame()});
+  window.addEventListener("pagehide",saveGame);
+  $("resetBtn").addEventListener("click",function(){if(window.confirm("Xóa toàn bộ tiến trình đã lưu?")){try{localStorage.removeItem("gta6save");localStorage.removeItem("gta6ach")}catch(e){}location.reload()}});
+  $("chatOpen").addEventListener("click",function(){$("chatBox").hidden=false;$("chatOpen").hidden=true;$("micBtn").hidden=true});
+  $("chatHide").addEventListener("click",function(){$("chatBox").hidden=true;$("chatOpen").hidden=false;$("micBtn").hidden=false});
   var chatSendNow=function(){var t=$("chatIn").value.trim();if(!t)return;$("chatIn").value="";var to=$("chatTo").value;if(to==="room")roomSend(t);else dmSend(to.slice(2),t)};
   $("chatSend").addEventListener("click",chatSendNow);
   $("chatIn").addEventListener("keydown",function(e){e.stopPropagation();if(e.key==="Enter")chatSendNow()});
@@ -1744,6 +2050,7 @@ var game=(function(){
     set running(v){running=v},
     set paused(v){paused=v},
     setGender:function(g){applyGender(g)},
+    save:function(){saveGame()},
     micOn:function(){getMic(function(){})},
     resume:function(){resize();last=performance.now();keys={};joyId=-1;nitroId=-1;camId=-1}
   };
