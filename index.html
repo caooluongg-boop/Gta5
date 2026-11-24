@@ -79,6 +79,7 @@ body{padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,e
 <button class="link" id="chatOpen" style="position:fixed;left:8px;top:max(8px,env(safe-area-inset-top,0px));z-index:25;background:rgba(15,10,25,.8);border-radius:10px;padding:6px 10px">Chat</button>
 <div id="charSel" hidden style="position:fixed;inset:0;z-index:40;background:rgba(7,4,13,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff"><p style="font-size:20px;font-weight:700;margin:0">Chọn nhân vật</p><div style="display:flex;gap:16px"><button class="play" id="charMale" style="font-size:18px">Nam</button><button class="play" id="charFemale" style="font-size:18px">Nữ</button></div></div>
 <button class="link" id="micBtn" style="position:fixed;left:82px;top:max(8px,env(safe-area-inset-top,0px));z-index:25;background:rgba(15,10,25,.8);border-radius:10px;padding:6px 10px">Mic: bật</button>
+<button class="link" id="saveMapBtn" hidden style="position:fixed;left:160px;top:max(8px,env(safe-area-inset-top,0px));z-index:25;background:rgba(15,10,25,.8);border-radius:10px;padding:6px 10px">Lưu map</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
 <script>
@@ -674,13 +675,42 @@ var game=(function(){
   function drawTime(){
     label(TOD_NAMES[Math.floor(tod*4+0.001)%4],width/2,24*u,16*u,"#ffffff");
   }
+  function isFriend(R){return !!(R&&R.id&&friendSet.indexOf(String(R.id))>=0)}
   function drawNames(){
+    var GOLD="#ffd23f";
     for(var id in net.players){
-      var R=net.players[id],dx=R.x-px,dy=R.y-py;
-      if(dx*dx+dy*dy>900*900)continue;
+      var R=net.players[id],dx=R.x-px,dy=R.y-py,fr=isFriend(R),nm=String(R.nm||"Bạn").slice(0,12);
+      if(!fr){
+        if(dx*dx+dy*dy>900*900)continue;
+        var v0=new THREE.Vector3(R.x,R.c?50:70,R.y).project(camera);
+        if(v0.z>1)continue;
+        label(nm,(v0.x+1)/2*width,(1-v0.y)/2*height,13*u,"#7dff8a");
+        continue;
+      }
+      /* Bạn bè: nhãn vàng có sao + mũi tên xuống, luôn thấy kể cả ở xa */
       var v=new THREE.Vector3(R.x,R.c?50:70,R.y).project(camera);
-      if(v.z>1)continue;
-      label(String(R.nm||"Bạn").slice(0,12),(v.x+1)/2*width,(1-v.y)/2*height,13*u,"#7dff8a");
+      var sx=(v.x+1)/2*width,sy=(1-v.y)/2*height;
+      var behind=v.z>1;
+      if(behind){sx=width-sx;sy=height-sy}
+      var m=34*u,off=behind||sx<m||sx>width-m||sy<m||sy>height-m;
+      if(!off){
+        var pulse=1+0.12*Math.sin(time*5);
+        label("★ "+nm,sx,sy-14*u,17*u*pulse,GOLD);
+        c.fillStyle=GOLD;c.strokeStyle="#000";c.lineWidth=2*u;
+        c.beginPath();c.moveTo(sx-8*u,sy-6*u);c.lineTo(sx+8*u,sy-6*u);c.lineTo(sx,sy+6*u);c.closePath();c.stroke();c.fill();
+      }else{
+        /* mũi tên ở mép màn hình chỉ hướng tới bạn */
+        var cx0=width/2,cy0=height/2,ang=Math.atan2(sy-cy0,sx-cx0);
+        var ex=clamp(cx0+Math.cos(ang)*width,m,width-m),ey=clamp(cy0+Math.sin(ang)*height,m,height-m);
+        var t=Math.min(Math.abs((cx0-m)/(Math.cos(ang)||1e-6)),Math.abs((cy0-m)/(Math.sin(ang)||1e-6)));
+        ex=cx0+Math.cos(ang)*t;ey=cy0+Math.sin(ang)*t;
+        c.save();c.translate(ex,ey);c.rotate(ang);
+        c.fillStyle=GOLD;c.strokeStyle="#000";c.lineWidth=2.5*u;
+        c.beginPath();c.moveTo(16*u,0);c.lineTo(-10*u,-11*u);c.lineTo(-10*u,11*u);c.closePath();c.stroke();c.fill();
+        c.restore();
+        var tx=clamp(ex-Math.cos(ang)*34*u,50*u,width-50*u),ty=clamp(ey-Math.sin(ang)*34*u+5*u,18*u,height-10*u);
+        label("★ "+nm+" · "+Math.round(Math.sqrt(dx*dx+dy*dy)/10)+"m",tx,ty,13*u,GOLD);
+      }
     }
   }
   var ACH=[
@@ -777,15 +807,35 @@ var game=(function(){
   function getMic(cb){
     if(voice.stream)return cb(voice.stream);
     var fail=function(){chatAdd("Hệ thống","Chưa mở được mic. Bấm nút Mic và cho phép micro.","");cb(new MediaStream())};
-    try{navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(function(st){voice.stream=st;voiceClear();cb(st)},fail)}catch(e){fail()}
+    try{navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},video:false}).then(function(st){voice.stream=st;applyMic();voiceClear();cb(st)},fail)}catch(e){fail()}
   }
+  var VOICE_GAIN=4;
+  var vctx=null,vnodes={};
+  function voiceCtx(){
+    if(!vctx){try{vctx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){vctx=null}}
+    if(vctx&&vctx.state==="suspended"){try{vctx.resume()}catch(e){}}
+    return vctx;
+  }
+  function applyMic(){if(voice.stream)voice.stream.getAudioTracks().forEach(function(t){t.enabled=voice.on})}
   function playVoice(pid,st){
     var a=document.getElementById("va-"+pid);
     if(!a){a=document.createElement("audio");a.id="va-"+pid;a.autoplay=true;document.body.appendChild(a)}
-    a.srcObject=st;var pr=a.play();if(pr&&pr.catch)pr.catch(function(){});
+    a.srcObject=st;
+    var ctx=voiceCtx();
+    if(ctx){
+      try{
+        if(vnodes[pid]){try{vnodes[pid].disconnect()}catch(e){}}
+        a.muted=true; /* chỉ để giữ stream chạy; tiếng phát qua GainNode */
+        var src=ctx.createMediaStreamSource(st),g=ctx.createGain(),comp=ctx.createDynamicsCompressor();
+        g.gain.value=VOICE_GAIN;
+        src.connect(g);g.connect(comp);comp.connect(ctx.destination);
+        vnodes[pid]=src;
+      }catch(e){a.muted=false;a.volume=1}
+    }
+    var pr=a.play();if(pr&&pr.catch)pr.catch(function(){});
   }
-  function dropVoice(pid){delete voice.calls[pid];var a=document.getElementById("va-"+pid);if(a)a.remove()}
-  function voiceClear(){for(var pid in voice.calls){try{voice.calls[pid].close()}catch(e){}}voice.calls={};document.querySelectorAll("audio[id^='va-']").forEach(function(a){a.remove()})}
+  function dropVoice(pid){delete voice.calls[pid];if(vnodes[pid]){try{vnodes[pid].disconnect()}catch(e){}delete vnodes[pid]}var a=document.getElementById("va-"+pid);if(a)a.remove()}
+  function voiceClear(){for(var pid in voice.calls){try{voice.calls[pid].close()}catch(e){}}voice.calls={};for(var k in vnodes){try{vnodes[k].disconnect()}catch(e){}}vnodes={};document.querySelectorAll("audio[id^='va-']").forEach(function(a){a.remove()})}
   function attachPeer(p){
     p.on("call",function(call){
       getMic(function(st){
@@ -939,7 +989,7 @@ var game=(function(){
         var hsh=0;for(var ci=0;ci<id2.length;ci++)hsh+=id2.charCodeAt(ci);
         var hm=buildHuman({skin:NSKIN[hsh%4],shirt:NCOL[hsh%5],pant:0x222222,hair:0x111111});
         var cm=buildCarMesh({kind:0,cop:false,color:NCOL[hsh%5]});scene.add(cm);
-        g=net.ghosts[id2]={hm:hm,cm:cm,rx:R.x,ry:R.y,rh:R.h,ph:0};
+        g=net.ghosts[id2]={hm:hm,cm:cm,rx:R.x,ry:R.y,rh:R.h,ph:0};if(isFriend(R))say("★ Bạn bè "+String(R.nm||"Bạn").slice(0,12)+" đã vào game!");
       }
       var D2=(R.rd&&R.rq)?stateOf(R.rq,me):null;
       var rider=!!(R.rd&&D2&&D2.c===1);
@@ -1813,7 +1863,9 @@ var game=(function(){
     c.fillStyle="#f4a14a";for(i=3;i<N;i+=6){c.fillRect(mx0,my0+i*P*sc,S,ROAD*sc);c.fillRect(mx0+i*P*sc,my0,ROAD*sc,S)}
     var SSH=["TIỆM SÚNG","PHỞ","SHOP ÁO","TẠP HÓA"];for(i=0;i<shops.length;i++){var sh=shops[i],sx=mx0+sh.x*sc,sy=my0+sh.z*sc;c.fillStyle=SCSS[sh.type];c.beginPath();c.arc(sx,sy,(sh.type===0?9:6)*u,0,TWO_PI);c.fill();c.strokeStyle="#fff";c.lineWidth=2*u;c.stroke();label(SSH[sh.type],sx,sy-13*u,13*u,"#fff")}
     for(i=0;i<props.length;i++){var pp=props[i],ppx=mx0+pp.x*sc,ppy=my0+pp.y*sc;c.fillStyle=pp.own?"#7dff8a":"#ffffff";c.fillRect(ppx-6*u,ppy-6*u,12*u,12*u);label(pp.n,ppx,ppy-10*u,12*u,"#fff")}
-    for(var rid in net.players){var RP=net.players[rid],rpx=mx0+RP.x*sc,rpy=my0+RP.y*sc;c.fillStyle="#7dff8a";c.beginPath();c.arc(rpx,rpy,6*u,0,TWO_PI);c.fill();label(String(RP.nm||"Bạn").slice(0,12),rpx,rpy-10*u,12*u,"#7dff8a")}
+    for(var rid in net.players){var RP=net.players[rid],rpx=mx0+RP.x*sc,rpy=my0+RP.y*sc,rfr=isFriend(RP);
+      if(rfr){var pr=9*u+2*u*Math.sin(time*5);c.fillStyle="#ffd23f";c.beginPath();c.arc(rpx,rpy,pr,0,TWO_PI);c.fill();c.strokeStyle="#fff";c.lineWidth=3*u;c.stroke();label("★ "+String(RP.nm||"Bạn").slice(0,12),rpx,rpy-14*u,15*u,"#ffd23f")}
+      else{c.fillStyle="#7dff8a";c.beginPath();c.arc(rpx,rpy,6*u,0,TWO_PI);c.fill();label(String(RP.nm||"Bạn").slice(0,12),rpx,rpy-10*u,12*u,"#7dff8a")}}
     for(i=0;i<cops.length;i++){c.fillStyle=(Math.floor(time*6)%2)?"#ff3b3b":"#3b6bff";c.beginPath();c.arc(mx0+cops[i].x*sc,my0+cops[i].y*sc,3*u,0,TWO_PI);c.fill()}
     if(mission){c.fillStyle="#ffd23f";c.beginPath();c.arc(mx0+mission.x*sc,my0+mission.y*sc,6*u,0,TWO_PI);c.fill();c.strokeStyle="#fff";c.lineWidth=2*u;c.stroke()}
     if(wp){c.strokeStyle="#fff";c.lineWidth=3*u;c.beginPath();c.arc(mx0+wp.x*sc,my0+wp.y*sc,8*u,0,TWO_PI);c.stroke()}
@@ -2000,7 +2052,7 @@ var game=(function(){
   if(!Array.isArray(friendSet))friendSet=[];
   if(!myName)myName="Bạn";
   function saveProfile(){try{localStorage.setItem("gta6code",myCode);localStorage.setItem("gta6name",myName);localStorage.setItem("gta6friends",JSON.stringify(friendSet))}catch(e){}}
-  function renderFriends(){var sel=$("chatTo");if(sel){sel.innerHTML="";sel.appendChild(new Option("Cả phòng","room"));friendSet.forEach(function(f){sel.appendChild(new Option("Bạn: "+f,"f:"+f))})}$("myCode").textContent=myCode;$("myName").value=myName;$("friendList").textContent=friendSet.length?"Bạn bè: "+friendSet.join(" · "):"Chưa có bạn bè. Nhập mã bạn bè rồi bấm Thêm bạn."}
+  function renderFriends(){var sel=$("chatTo");if(sel){sel.innerHTML="";sel.appendChild(new Option("Cả phòng","room"));friendSet.forEach(function(f){sel.appendChild(new Option("★ Bạn: "+f,"f:"+f))})}$("myCode").textContent=myCode;$("myName").value=myName;$("friendList").textContent=friendSet.length?"★ Bạn bè: "+friendSet.join(" · "):"Chưa có bạn bè. Nhập mã bạn bè rồi bấm Thêm bạn."}
   function startPresence(){
     if(pres||typeof Peer==="undefined")return;
     try{pres=new Peer("gta6p-"+myCode)}catch(e){pres=null;return}
@@ -2039,12 +2091,28 @@ var game=(function(){
   document.addEventListener("visibilitychange",function(){if(document.hidden)saveGame()});
   window.addEventListener("pagehide",saveGame);
   $("resetBtn").addEventListener("click",function(){if(window.confirm("Xóa toàn bộ tiến trình đã lưu?")){try{localStorage.removeItem("gta6save");localStorage.removeItem("gta6ach")}catch(e){}location.reload()}});
-  $("chatOpen").addEventListener("click",function(){$("chatBox").hidden=false;$("chatOpen").hidden=true;$("micBtn").hidden=true});
-  $("chatHide").addEventListener("click",function(){$("chatBox").hidden=true;$("chatOpen").hidden=false;$("micBtn").hidden=false});
+  $("chatOpen").addEventListener("click",function(){$("chatBox").hidden=false;$("chatOpen").hidden=true;$("micBtn").hidden=true;saveBtnSync()});
+  $("chatHide").addEventListener("click",function(){$("chatBox").hidden=true;$("chatOpen").hidden=false;$("micBtn").hidden=false;saveBtnSync()});
   var chatSendNow=function(){var t=$("chatIn").value.trim();if(!t)return;$("chatIn").value="";var to=$("chatTo").value;if(to==="room")roomSend(t);else dmSend(to.slice(2),t)};
   $("chatSend").addEventListener("click",chatSendNow);
   $("chatIn").addEventListener("keydown",function(e){e.stopPropagation();if(e.key==="Enter")chatSendNow()});
-  $("micBtn").addEventListener("click",function(){getMic(function(st){voice.on=!voice.on;st.getAudioTracks().forEach(function(t){t.enabled=voice.on});$("micBtn").textContent=voice.on?"Mic: bật":"Mic: tắt";voiceSync()})});
+  var saveBtnSync=function(){
+    var b=$("saveMapBtn");if(!b)return;
+    b.hidden=!(net.isHost&&net.ok&&running)||!$("chatBox").hidden;
+  };
+  var saveFlashT=0;
+  $("saveMapBtn").addEventListener("click",function(){
+    if(!net.isHost)return;
+    saveGame();
+    var b=$("saveMapBtn");b.textContent="Đã lưu ✓";say("Đã lưu map!");
+    clearTimeout(saveFlashT);saveFlashT=setTimeout(function(){b.textContent="Lưu map"},1500);
+  });
+  setInterval(saveBtnSync,400);
+  var micRefresh=function(){$("micBtn").textContent=voice.on?"Mic: bật":"Mic: tắt"};
+  $("micBtn").addEventListener("click",function(){
+    voice.on=!voice.on;applyMic();micRefresh();voiceCtx();
+    if(!voice.stream)getMic(function(){applyMic();micRefresh();voiceSync()});else voiceSync();
+  });
   return{
     get running(){return running},
     set running(v){running=v},
